@@ -81,8 +81,8 @@ Tools.compatibility = (function() {
       </div>` : ''}
       ${result.scenarios ? `<div class="fortune-section">
         <div class="fortune-label">✦ Perfect Date Ideas</div>
-        <div class="detail-grid">
-          ${result.scenarios.split('\n').filter(s => s.trim()).map(s => `<div class="detail-item"><div class="detail-icon">✦</div><div class="detail-value" style="font-size:0.9rem;">${s.trim()}</div></div>`).join('')}
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
+          ${result.scenarios.split('\n').filter(s => s.trim()).map(s => `<div class="detail-item" style="text-align:left;padding:16px 20px;display:flex;align-items:flex-start;gap:12px;"><div class="detail-icon" style="flex-shrink:0;margin-bottom:0;">✦</div><div class="detail-value" style="font-size:0.88rem;line-height:1.7;margin-top:0;text-align:left;">${s.trim()}</div></div>`).join('')}
         </div>
       </div>` : ''}`;
 

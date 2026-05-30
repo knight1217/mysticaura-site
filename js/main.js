@@ -233,9 +233,11 @@ window.App = (function() {
 
   function showPortraitSurprise(zodiacSign, context) {
     // Store the pre-selected zodiac for portrait tool
-    window._portraitSurpriseZodiac = zodiacSign;
+    // If coming from compatibility (couple context), use the first zodiac
+    const ctx = context || {};
+    window._portraitSurpriseZodiac = ctx.z1 || zodiacSign;
     // Store context for portrait.js to read
-    window._portraitSurpriseContext = context || {};
+    window._portraitSurpriseContext = ctx;
     // Open the portrait flow directly
     openTool('portrait');
   }
