@@ -557,6 +557,8 @@ body::before {
   border: 1px solid rgba(155,123,184,0.2);
   border-radius: 24px; padding: 32px 28px;
   position: relative; overflow: visible;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 .fortune-card::before {
   content: ''; position: absolute; top: -50%; left: -50%;
