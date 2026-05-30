@@ -7,47 +7,46 @@ Tools.portrait = (function() {
     selectedZodiac = null;
     document.getElementById('portrait-proceed').disabled = true;
 
-    // Check if this is a surprise mode activation
+    // Check if this is a surprise mode activation (from another tool's result)
     let surpriseZodiac = window._portraitSurpriseZodiac;
-    
-    // Fallback: if zodiac was consumed but context still has z1 (e.g. after Try Again)
+
+    // Fallback: zodiac consumed but context still has it (e.g. Try Again)
     if (!surpriseZodiac && window._portraitSurpriseContext && window._portraitSurpriseContext.z1) {
       surpriseZodiac = window._portraitSurpriseContext.z1;
     }
-    
+
     if (surpriseZodiac) {
       delete window._portraitSurpriseZodiac;
 
       const D = window.__DATA__;
-      const match = D.zodiacs.find(z => z.name === surpriseZodiac);
-      if (match) {
-        selectedZodiac = match;
-        // Hide zodiac picker immediately to prevent flash
-        document.getElementById('portrait-zodiac-grid').innerHTML = '';
-        document.getElementById('portrait-proceed').disabled = true;
-        document.getElementById('portrait-zodiac-picker').style.opacity = '0.3';
-        startReading(true);
-        return;
-      }
+      let match = D.zodiacs.find(z => z.name === surpriseZodiac);
+
+      // If no match, fallback to first zodiac — never show the picker in surprise mode
+      if (!match) match = D.zodiacs[0];
+
+      selectedZodiac = match;
+
+      // Hide the entire zodiac picker (title, grid, button) — no flash, no re-select
+      const picker = document.getElementById('portrait-zodiac-picker');
+      if (picker) picker.style.display = 'none';
+
+      startReading(true);
+      return;
+    }
+
+    // Normal mode: show the zodiac picker grid
+    const picker = document.getElementById('portrait-zodiac-picker');
+    if (picker) {
+      picker.style.display = '';
+      picker.style.opacity = '1';
     }
 
     const grid = document.getElementById('portrait-zodiac-grid');
     grid.innerHTML = '';
 
-    // Add "Powered by your reading" note if coming from surprise mode (zodiac not found)
-    const picker = document.getElementById('portrait-zodiac-picker');
-    // Remove any existing note
+    // Clean up any surprise note
     const existingNote = picker.querySelector('.surprise-note');
     if (existingNote) existingNote.remove();
-    // Restore full opacity (may have been dimmed by surprise mode)
-    picker.style.opacity = '1';
-    if (surpriseZodiac) {
-      const note = document.createElement('div');
-      note.className = 'surprise-note';
-      note.style.cssText = 'text-align:center;font-size:0.82rem;color:var(--warm-gold);font-style:italic;margin-bottom:12px;';
-      note.textContent = 'Powered by your reading';
-      picker.insertBefore(note, picker.firstChild);
-    }
 
     D.zodiacs.forEach(z => {
       const card = document.createElement('div');
