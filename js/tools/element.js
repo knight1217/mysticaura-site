@@ -23,7 +23,8 @@ Tools.element = (function() {
     images.forEach((img, i) => {
       const card = document.createElement('div');
       card.className = 'element-img-card';
-      card.innerHTML = `<span>${img.emoji}</span><span class="img-label">${img.label}</span>`;
+      card.dataset.index = i;
+      card.innerHTML = `<span class="img-emoji">${img.emoji}</span><span class="img-label">${img.label}</span>`;
       card.onclick = () => {
         if (card.classList.contains('selected')) {
           card.classList.remove('selected');
@@ -32,6 +33,19 @@ Tools.element = (function() {
           card.classList.add('selected');
           selected.push(i);
         }
+        // Update selection order badges
+        const allCards = grid.querySelectorAll('.element-img-card');
+        allCards.forEach(c => {
+          const badge = c.querySelector('.sel-badge');
+          if (badge) badge.remove();
+        });
+        selected.forEach((idx, order) => {
+          const c = allCards[idx];
+          const b = document.createElement('span');
+          b.className = 'sel-badge';
+          b.textContent = order + 1;
+          c.appendChild(b);
+        });
         document.getElementById('element-proceed').disabled = selected.length !== 3;
       };
       grid.appendChild(card);

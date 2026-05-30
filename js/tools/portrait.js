@@ -109,10 +109,13 @@ Tools.portrait = (function() {
 
     // Header: match Compatibility page style — emojis side by side + "Name1 + Name2" text
     const header = isCouple && coupleZ2
-      ? `<span class="result-zodiac">${selectedZodiac.emoji}</span><span class="result-zodiac">${coupleZ2.emoji}</span>
+      ? `<div style="display:flex;align-items:center;justify-content:center;gap:16px;">
+           <span class="result-zodiac" style="font-size:3rem;">${selectedZodiac.emoji}</span>
+           <span class="result-zodiac" style="font-size:3rem;">${coupleZ2.emoji}</span>
+         </div>
          <div style="font-family:'Georgia',serif;font-size:1.1rem;color:var(--text-main);margin-top:6px;">${selectedZodiac.name} + ${coupleZ2.name}</div>
          <div class="result-title" style="margin-top:2px;">Your Mystic Portrait Gift</div>`
-      : `<span class="result-zodiac">${selectedZodiac.emoji}</span>
+      : `<span class="result-zodiac" style="font-size:3rem;">${selectedZodiac.emoji}</span>
          <div style="font-family:'Georgia',serif;font-size:1.1rem;color:var(--text-main);margin-top:6px;">${selectedZodiac.name}</div>
          <div class="result-title" style="margin-top:2px;">Your Mystic Portrait Gift</div>`;
 

@@ -715,63 +715,120 @@ body::before {
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
 }
 
-/* ===== Tarot Cards ===== */
+/* ===== Tarot Cards — v4 Simplified ===== */
 .tarot-spread {
   display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
   max-width: 600px; width: 100%; margin: 20px 0;
 }
-.tarot-slot {
-  width: 120px; height: 168px;
-  background: rgba(45,27,78,0.08); border: 2px dashed rgba(155,123,184,0.25);
-  border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.4s; position: relative;
-  font-size: 2.5rem; color: var(--purple-mist);
+.tarot-card-wrap {
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,165,116,0.15);
 }
-.tarot-slot:hover {
-  border-color: rgba(212,165,116,0.5);
-  box-shadow: 0 0 24px rgba(212,165,116,0.15);
-  transform: translateY(-3px);
+.tarot-card-back-v4 {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(145deg, #2D1B4E 0%, #1e0e3d 30%, #150a2e 60%, #2D1B4E 100%);
+  border: 2px solid rgba(212,165,116,0.4);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  backface-visibility: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 40px rgba(155,123,184,0.1), inset 0 0 40px rgba(155,123,184,0.08);
+  overflow: hidden;
 }
-.tarot-slot.revealed {
-  border-style: solid;
-  border-color: rgba(212,165,116,0.6);
-  background: var(--card-bg);
-  box-shadow: 0 0 28px rgba(212,165,116,0.18);
-  cursor: default;
+.tarot-card-back-v4::before {
+  content: ''; position: absolute; inset: 8px;
+  border: 1px solid rgba(212,165,116,0.25);
+  border-radius: 10px;
+  pointer-events: none;
 }
-.tarot-slot.revealed .card-front {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+.tarot-card-back-v4::after {
+  content: ''; position: absolute; inset: 16px;
+  border: 1px dashed rgba(212,165,116,0.15);
+  border-radius: 6px;
+  pointer-events: none;
 }
-.tarot-slot .card-front { display: none; }
-.tarot-slot.revealed .card-front { display: flex; }
-.tarot-slot .card-back { display: block; }
-.tarot-slot.revealed .card-back { display: none; }
+.tarot-card-front-v4 {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #1a0e38 0%, #231345 30%, #1D0F3A 70%, #150a2e 100%);
+  border: 2px solid rgba(212,165,116,0.5);
+  border-radius: 14px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  backface-visibility: hidden;
+  box-shadow: inset 0 0 30px rgba(155,123,184,0.08);
+  overflow: hidden;
+}
+.tarot-card-front-v4::before {
+  content: ''; position: absolute; inset: 6px;
+  border: 1px solid rgba(212,165,116,0.2);
+  border-radius: 10px;
+  pointer-events: none;
+}
+@keyframes tarotGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(212,165,116,0.3), 0 0 20px rgba(212,165,116,0.1); }
+  50% { box-shadow: 0 0 20px rgba(212,165,116,0.6), 0 0 45px rgba(155,123,184,0.4), 0 0 60px rgba(212,165,116,0.2); }
+}
 
-/* ===== Element Image Selection ===== */
+/* ===== Element Image Selection — V2 Refined ===== */
 .element-img-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
-  max-width: 600px; width: 100%;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+  max-width: 620px; width: 100%; padding: 0 8px;
 }
-@media (max-width: 550px) { .element-img-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 550px) { .element-img-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
 .element-img-card {
   aspect-ratio: 1;
-  background: var(--card-bg); border: 2px solid rgba(155,123,184,0.2);
-  border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.3s; font-size: 2.5rem;
-  flex-direction: column; gap: 2px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.75) 0%, rgba(250,245,255,0.6) 100%);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(155,123,184,0.18);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-direction: column; gap: 6px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(155,123,184,0.06);
 }
+.element-img-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(212,165,116,0.08) 0%, transparent 70%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.element-img-card:hover::before { opacity: 1; }
 .element-img-card:hover {
-  border-color: rgba(212,165,116,0.4);
-  box-shadow: 0 0 16px rgba(155,123,184,0.1);
+  border-color: rgba(212,165,116,0.5);
+  box-shadow: 0 8px 32px rgba(155,123,184,0.15), 0 0 0 1px rgba(212,165,116,0.1);
+  transform: translateY(-4px) scale(1.03);
+}
+.element-img-card .img-emoji {
+  font-size: 2.6rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+.element-img-card:hover .img-emoji { transform: scale(1.12); }
+.element-img-card .img-label {
+  font-size: 0.6rem; color: var(--text-dim);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 600; z-index: 1;
 }
 .element-img-card.selected {
   border-color: var(--warm-gold);
-  box-shadow: 0 0 20px rgba(212,165,116,0.2);
-  background: rgba(255,255,255,0.85);
+  background: linear-gradient(145deg, rgba(255,250,245,0.9) 0%, rgba(255,245,235,0.8) 100%);
+  box-shadow: 0 0 28px rgba(212,165,116,0.25), 0 4px 20px rgba(212,165,116,0.1), inset 0 0 20px rgba(212,165,116,0.05);
+  transform: translateY(-4px) scale(1.05);
 }
-.element-img-card .img-label {
-  font-size: 0.55rem; color: var(--text-dim);
-  letter-spacing: 0.1em; text-transform: uppercase;
+.element-img-card.selected::before { opacity: 1; }
+.element-img-card.selected .img-label { color: var(--warm-gold); }
+/* Selection order badge */
+.element-img-card .sel-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--warm-gold); color: #fff;
+  font-size: 0.65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(212,165,116,0.4);
+  z-index: 2;
 }
 
 /* ===== Pollinations Preview ===== */
@@ -786,6 +843,144 @@ body::before {
 .pollinations-note {
   font-size: 0.72rem; color: var(--text-dim); margin-top: 6px;
   font-style: italic; opacity: 0.7;
+}
+
+/* ===== Custom Select Dropdown — Mystic Theme ===== */
+.mystic-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 14px 44px 14px 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(155,123,184,0.3);
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1rem;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 12px rgba(155,123,184,0.06);
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239B7BB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px 16px;
+}
+.mystic-select:hover {
+  border-color: rgba(155,123,184,0.55);
+  box-shadow: 0 4px 20px rgba(155,123,184,0.10);
+}
+.mystic-select:focus {
+  border-color: rgba(212,165,116,0.6);
+  box-shadow: 0 0 20px rgba(155,123,184,0.18), 0 0 40px rgba(212,165,116,0.10);
+}
+/* Options inside dropdown inherit font */
+.mystic-select option {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1rem;
+  color: var(--text-main);
+  background: #fff;
+  padding: 10px;
+}
+
+/* ===== Custom Calendar Picker — Mystic Theme ===== */
+.calendar-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+.calendar-overlay.active { display: flex; }
+.calendar-popup {
+  background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(250,245,255,0.95) 100%);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(155,123,184,0.25);
+  border-radius: 24px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 20px 60px rgba(155,123,184,0.2), 0 0 0 1px rgba(255,255,255,0.5);
+  animation: calendarPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes calendarPopIn {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.calendar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; padding: 0 4px;
+}
+.calendar-header button {
+  background: rgba(155,123,184,0.1); border: 1px solid rgba(155,123,184,0.2);
+  border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; color: var(--text-main);
+  transition: all 0.2s;
+}
+.calendar-header button:hover {
+  background: rgba(212,165,116,0.15); border-color: rgba(212,165,116,0.4);
+}
+.calendar-month-year {
+  font-family: 'Georgia', serif; font-size: 1.1rem;
+  color: var(--text-main); font-weight: 600; letter-spacing: 0.05em;
+}
+.calendar-weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px; margin-bottom: 8px;
+}
+.calendar-weekdays span {
+  text-align: center; font-size: 0.7rem;
+  color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 600;
+}
+.calendar-days {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  font-size: 0.9rem; color: var(--text-main);
+  cursor: pointer; transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.calendar-day:hover {
+  background: rgba(155,123,184,0.1);
+  border-color: rgba(155,123,184,0.2);
+}
+.calendar-day.other-month { color: rgba(107,82,120,0.3); }
+.calendar-day.today {
+  border-color: rgba(212,165,116,0.5);
+  background: rgba(212,165,116,0.08);
+}
+.calendar-day.selected {
+  background: linear-gradient(135deg, rgba(155,123,184,0.7), rgba(212,165,116,0.7));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(155,123,184,0.3);
+  font-weight: 600;
+}
+.calendar-day.selected:hover {
+  background: linear-gradient(135deg, rgba(155,123,184,0.8), rgba(212,165,116,0.8));
+}
+.calendar-footer {
+  display: flex; justify-content: center; margin-top: 14px;
+}
+.calendar-footer button {
+  background: transparent; border: none;
+  color: var(--warm-gold); font-family: 'Georgia', serif;
+  font-size: 0.82rem; cursor: pointer;
+  letter-spacing: 0.1em; padding: 6px 16px;
+  border-radius: 20px; transition: all 0.2s;
+}
+.calendar-footer button:hover {
+  background: rgba(212,165,116,0.1);
 }
 
 /* ===== Custom Date Input — Mystic Theme ===== */

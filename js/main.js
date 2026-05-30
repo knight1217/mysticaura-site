@@ -316,6 +316,127 @@ window.App = (function() {
   };
 })();
 
+/* ===== CUSTOM CALENDAR ===== */
+window.Calendar = (function() {
+  let currentDate = new Date();
+  let selectedDate = null;
+  const monthNames = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+
+  function open() {
+    const overlay = document.getElementById('calendarOverlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+    render();
+  }
+
+  function close(e) {
+    if (e && e.target !== document.getElementById('calendarOverlay')) return;
+    const overlay = document.getElementById('calendarOverlay');
+    if (overlay) overlay.classList.remove('active');
+  }
+
+  function prevMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    render();
+  }
+
+  function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    render();
+  }
+
+  function today() {
+    currentDate = new Date();
+    selectedDate = new Date();
+    render();
+    updateInput();
+    close();
+  }
+
+  function selectDay(dayEl) {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const day = parseInt(dayEl.dataset.day, 10);
+    selectedDate = new Date(year, month, day);
+    render();
+    updateInput();
+    close();
+  }
+
+  function updateInput() {
+    if (!selectedDate) return;
+    const input = document.getElementById('destiny-birthday');
+    if (input) {
+      const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const d = String(selectedDate.getDate()).padStart(2, '0');
+      const y = selectedDate.getFullYear();
+      input.value = `${m}/${d}/${y}`;
+    }
+  }
+
+  function render() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    document.getElementById('calendarMonthYear').textContent =
+      monthNames[month] + ' ' + year;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    const container = document.getElementById('calendarDays');
+    container.innerHTML = '';
+
+    // Previous month padding
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const el = document.createElement('span');
+      el.className = 'calendar-day other-month';
+      el.textContent = daysInPrevMonth - i;
+      container.appendChild(el);
+    }
+
+    const today = new Date();
+    // Current month days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const el = document.createElement('span');
+      el.className = 'calendar-day';
+      el.textContent = d;
+      el.dataset.day = d;
+
+      if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+        el.classList.add('today');
+      }
+      if (selectedDate && d === selectedDate.getDate()
+          && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
+        el.classList.add('selected');
+      }
+      el.onclick = () => selectDay(el);
+      container.appendChild(el);
+    }
+
+    // Next month padding (fill to 6 rows = 42 cells)
+    const totalCells = firstDay + daysInMonth;
+    const remaining = 42 - totalCells;
+    for (let d = 1; d <= remaining; d++) {
+      const el = document.createElement('span');
+      el.className = 'calendar-day other-month';
+      el.textContent = d;
+      container.appendChild(el);
+    }
+  }
+
+  // Auto-bind to destiny birthday input
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('destiny-birthday');
+    if (input) {
+      input.addEventListener('click', open);
+    }
+  });
+
+  return { open, close, prevMonth, nextMonth, today };
+})();
+
 /* ===== INIT ===== */
 App.initStars();
 App.initConstellations();

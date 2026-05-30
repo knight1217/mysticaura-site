@@ -135,7 +135,7 @@
   <div class="flow-subtitle">Enter your name and birthday</div>
   <div style="max-width:400px;width:100%;">
     <input type="text" id="destiny-name" placeholder="Your name" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);margin-bottom:14px;outline:none;">
-    <input type="text" id="destiny-birthday" class="date-input" placeholder="MM/DD/YYYY" onfocus="this.type='date';this.setAttribute('lang','en')" onblur="if(!this.value){this.type='text';this.removeAttribute('lang')}" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:rgba(255,255,255,0.65);font-family:inherit;font-size:1rem;color:var(--text-main);outline:none;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
+    <input type="text" id="destiny-birthday" class="date-input" placeholder="MM/DD/YYYY" readonly style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:rgba(255,255,255,0.65);font-family:inherit;font-size:1rem;color:var(--text-main);outline:none;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;">
   </div>
   <button class="proceed-btn" id="destiny-proceed" onclick="Tools.destiny.startReading()">Reveal My Keywords ✧</button>
 </div>
@@ -156,7 +156,7 @@
   <div class="flow-subtitle">Describe yourself in 3 words</div>
   <div style="max-width:400px;width:100%;">
     <input type="text" id="persona-input" placeholder="e.g. dreamy, stubborn, creative" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);margin-bottom:14px;outline:none;">
-    <select id="persona-platform" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);outline:none;">
+    <select id="persona-platform" class="mystic-select">
       <option value="instagram">Instagram Bio</option>
       <option value="twitter">Twitter / X Bio</option>
       <option value="tiktok">TikTok Bio</option>
@@ -205,6 +205,24 @@
     <button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button>
   </div>
   <div class="surprise-container" id="surpriseContainer"></div>
+</div>
+
+<!-- ===== Custom Calendar Popup ===== -->
+<div class="calendar-overlay" id="calendarOverlay" onclick="Calendar.close(event)">
+  <div class="calendar-popup" id="calendarPopup" onclick="event.stopPropagation()">
+    <div class="calendar-header">
+      <button onclick="Calendar.prevMonth()">&#10094;</button>
+      <span class="calendar-month-year" id="calendarMonthYear"></span>
+      <button onclick="Calendar.nextMonth()">&#10095;</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+    <div class="calendar-days" id="calendarDays"></div>
+    <div class="calendar-footer">
+      <button onclick="Calendar.today()">Today</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== SCRIPTS ===== -->
