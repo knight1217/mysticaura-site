@@ -9,17 +9,15 @@ Tools.tarot = (function() {
   const STYLES = `
     /* --- Dark theme for flow-tarot page --- */
     #flow-tarot {
-      display: flex !important;
       flex-direction: column !important;
       align-items: center !important;
       justify-content: center !important;
-      min-height: 100vh !important;
-      min-height: 100dvh !important;
       background: linear-gradient(170deg, #0a0618 0%, #110b2a 25%, #1a0e38 50%, #0f0822 75%, #060312 100%) !important;
-      position: relative;
-      overflow-x: hidden;
-      padding: 20px 16px;
-      box-sizing: border-box;
+      position: relative !important;
+      overflow-x: hidden !important;
+      padding: 20px 16px !important;
+      box-sizing: border-box !important;
+      color: #F0D9B5 !important;
     }
     #flow-tarot .back-btn,
     #flow-tarot .flow-back-btn {
@@ -907,12 +905,9 @@ Tools.tarot = (function() {
     const flowPage = document.getElementById('flow-tarot');
     if (flowPage) {
       flowPage.style.cssText = `
-        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
-        min-height: 100dvh;
         background: linear-gradient(170deg, #0a0618 0%, #110b2a 25%, #1a0e38 50%, #0f0822 75%, #060312 100%);
         position: relative;
         overflow-x: hidden;
@@ -1022,6 +1017,9 @@ Tools.tarot = (function() {
       return;
     }
     App.hideLoading();
+
+    const rich = generateRichReading(drawnCards);
+    const hasGoodReading = result && result.reading && result.reading.length > 20;
 
     const positions = ['Past', 'Present', 'Future'];
 
