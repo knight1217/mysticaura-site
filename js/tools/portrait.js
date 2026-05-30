@@ -99,13 +99,33 @@ Tools.portrait = (function() {
 
     const platformHTML = buildPlatformCards(result.prompt, result.tier);
 
-    const header = `<span class="result-zodiac">${selectedZodiac.emoji}</span>
-      <div class="result-title">Your Mystic Portrait Gift</div>`;
+    // Check if this is a couple portrait (from compatibility with z2)
+    const isCouple = isSurprise && window._portraitSurpriseContext && window._portraitSurpriseContext.z2;
+    const ctx = isCouple ? window._portraitSurpriseContext : null;
+    let coupleZ2 = null;
+    if (ctx && ctx.z2) {
+      coupleZ2 = D.zodiacs.find(z => z.name === ctx.z2);
+    }
 
-    const tags = `<span class="tag">${selectedZodiac.name}</span>
-      <span class="tag">${selectedZodiac.element}</span>
-      <span class="tag">${result.styleDesc}</span>
-      <span class="tag">${result.vibe}</span>`;
+    // Header: couple → two emojis side by side; single → one emoji
+    const header = isCouple && coupleZ2
+      ? `<span class="result-zodiac">${selectedZodiac.emoji}</span><span style="font-size:1.5rem;margin:0 4px;opacity:0.4;">+</span><span class="result-zodiac">${coupleZ2.emoji}</span>
+         <div class="result-title">Your Mystic Portrait Gift</div>`
+      : `<span class="result-zodiac">${selectedZodiac.emoji}</span>
+         <div class="result-title">Your Mystic Portrait Gift</div>`;
+
+    // Tags: couple → both zodiac names; single → one zodiac name
+    const tags = isCouple && coupleZ2
+      ? `<span class="tag">${selectedZodiac.name}</span>
+         <span class="tag">+</span>
+         <span class="tag">${coupleZ2.name}</span>
+         <span class="tag">${selectedZodiac.element}</span>
+         <span class="tag">${result.styleDesc}</span>
+         <span class="tag">${result.vibe}</span>`
+      : `<span class="tag">${selectedZodiac.name}</span>
+         <span class="tag">${selectedZodiac.element}</span>
+         <span class="tag">${result.styleDesc}</span>
+         <span class="tag">${result.vibe}</span>`;
 
     const content = `
       <div class="fortune-section">
