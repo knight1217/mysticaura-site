@@ -107,18 +107,18 @@ Tools.portrait = (function() {
       coupleZ2 = D.zodiacs.find(z => z.name === ctx.z2);
     }
 
-    // Header: couple → two emojis side by side; single → one emoji
+    // Header: match Compatibility page style — emojis side by side + "Name1 + Name2" text
     const header = isCouple && coupleZ2
-      ? `<span class="result-zodiac">${selectedZodiac.emoji}</span><span style="font-size:1.5rem;margin:0 4px;opacity:0.4;">+</span><span class="result-zodiac">${coupleZ2.emoji}</span>
-         <div class="result-title">Your Mystic Portrait Gift</div>`
+      ? `<span class="result-zodiac">${selectedZodiac.emoji}</span><span class="result-zodiac">${coupleZ2.emoji}</span>
+         <div style="font-family:'Georgia',serif;font-size:1.1rem;color:var(--text-main);margin-top:6px;">${selectedZodiac.name} + ${coupleZ2.name}</div>
+         <div class="result-title" style="margin-top:2px;">Your Mystic Portrait Gift</div>`
       : `<span class="result-zodiac">${selectedZodiac.emoji}</span>
-         <div class="result-title">Your Mystic Portrait Gift</div>`;
+         <div style="font-family:'Georgia',serif;font-size:1.1rem;color:var(--text-main);margin-top:6px;">${selectedZodiac.name}</div>
+         <div class="result-title" style="margin-top:2px;">Your Mystic Portrait Gift</div>`;
 
-    // Tags: couple → both zodiac names; single → one zodiac name
+    // Tags: couple → "Name1 + Name2" as one tag; single → one name
     const tags = isCouple && coupleZ2
-      ? `<span class="tag">${selectedZodiac.name}</span>
-         <span class="tag">+</span>
-         <span class="tag">${coupleZ2.name}</span>
+      ? `<span class="tag">${selectedZodiac.name} + ${coupleZ2.name}</span>
          <span class="tag">${selectedZodiac.element}</span>
          <span class="tag">${result.styleDesc}</span>
          <span class="tag">${result.vibe}</span>`
