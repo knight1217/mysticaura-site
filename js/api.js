@@ -2,9 +2,8 @@
 window.API = (function() {
   const D = window.__DATA__;
 
-  // Gemini API Key — FOR LOCAL TESTING ONLY
-  // ⛔ Production: move to Cloudflare Worker. GitHub Pages = public, Key WILL leak if left here.
-  const geminiKey = ''; // ⛔ 占位符 — Key通过Cloudflare Worker代理
+  // API Proxy — Cloudflare Worker (Key never exposed to browser)
+  const PROXY_URL = 'https://mystic-proxy.butzyjj.workers.dev/api/gemini';
 
   /* ===== Random helpers ===== */
   function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -12,10 +11,6 @@ window.API = (function() {
 
   /* ===== Gemini API Call ===== */
   async function callGemini(prompt, systemInstruction) {
-    if (!geminiKey) return null;
-
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + geminiKey;
-
     const contents = [{
       role: 'user',
       parts: [{ text: prompt }]
@@ -27,7 +22,7 @@ window.API = (function() {
     }
 
     try {
-      const resp = await fetch(url, {
+      const resp = await fetch(PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
