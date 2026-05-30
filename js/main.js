@@ -297,8 +297,9 @@ window.App = (function() {
 
   /* ===== Error Display ===== */
   function showError(message) {
-    const header = '<span class="result-zodiac">❌</span><div class="result-title">Something went wrong</div>';
-    const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">${message}</div></div>`;
+    console.error('Tool error:', message);
+    const header = '<span class="result-zodiac">🔮</span><div class="result-title">Oops, the cosmos is busy</div>';
+    const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">Something went wrong. Please try again in a moment.</div></div>`;
     showResult(header, '', content, null, null);
   }
 

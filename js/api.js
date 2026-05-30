@@ -27,12 +27,12 @@ window.API = (function() {
     });
 
     if (!resp.ok) {
-      throw new Error(`API error: ${resp.status} ${resp.statusText}`);
+      throw new Error('Please try again');
     }
 
     const data = await resp.json();
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('API returned empty response');
+      throw new Error('Please try again');
     }
     return data.candidates[0].content.parts[0].text;
   }
