@@ -88,31 +88,30 @@ window.API = (function() {
     return safeParse(result);
   }
 
-  /* ===== Portrait ===== */
+  /* ===== Mystic Scene (replaces Portrait — no people, pure cosmic atmosphere) ===== */
   async function getPortrait(zodiac, context) {
     const ctxObj = window._portraitSurpriseContext || {};
     let contextDescription = '';
     if (ctxObj.from && ctxObj.from.includes('compatibility')) {
-      contextDescription = `This is for a COUPLE portrait (two people). Match: ${ctxObj.match || 'lovers'}. The prompt should feature TWO figures together, romantic cosmic couple energy.`;
+      contextDescription = `This is for a COUPLE / compatibility scene. The zodiac match is: ${ctxObj.match || 'two signs'}. Do NOT draw people. Instead, create a mystical landscape where the natural elements of BOTH signs merge — for example mountains meeting wheat fields, ocean waves embracing cliffs, firelight dancing with forest shadows. Two distinct natural forces coexisting in one breathtaking frame.`;
     } else if (ctxObj.from && ctxObj.from.includes('destiny')) {
-      contextDescription = `Keywords: ${ctxObj.keywords || 'mystery'}. Build the prompt around these destiny keywords as visual metaphors.`;
+      contextDescription = `Destiny keywords: ${ctxObj.keywords || 'mystery'}. Weave these keywords into the scene as visual metaphors — NOT as people. For example, "freedom" could be a lone eagle soaring over a starlit canyon; "eternal" could be ancient stone circles under the Milky Way.`;
     } else if (ctxObj.from && ctxObj.from.includes('horoscope')) {
-      contextDescription = `Their current mood: ${ctxObj.mood || 'neutral'}. Reflect this emotional state in the portrait's mood and lighting.`;
+      contextDescription = `Mood: ${ctxObj.mood || 'neutral'}. Let this emotional tone color the entire landscape — warm golden light for joy, deep indigo shadows for anxiety, soft dawn pastels for hope.`;
     } else if (ctxObj.from && ctxObj.from.includes('element')) {
-      contextDescription = `Their element: ${ctxObj.element || zodiac.element}. Make the portrait an elemental embodiment.`;
+      contextDescription = `Element: ${ctxObj.element || zodiac.element}. Build the scene entirely around this element — fire = volcanic glow + ember-lit sky, water = moonlit ocean + bioluminescence, earth = ancient forest + moss-covered stones, air = cloudscapes + aurora ribbons.`;
     }
 
     const result = await callGemini(
-      `Create ONE stunning, creative AI image generation prompt for a mystical portrait based on zodiac sign ${zodiac.name} (${zodiac.emoji}, ${zodiac.element}).${contextDescription ? '\n\n' + contextDescription : ''}
+      `Create ONE stunning AI image prompt for a MYSTICAL COSMIC LANDSCAPE based on zodiac sign ${zodiac.name} (${zodiac.emoji}, ${zodiac.element}).${contextDescription ? '\n\n' + contextDescription : ''}
 
 CRITICAL RULES:
-- Write a narrative prompt that tells a visual STORY, not a list of keywords
-- 3-5 sentences, poetic and specific
-- Include lighting, color, mood, composition details
-- For couple/romantic context: describe TWO figures, their interaction, the energy between them
-- For destiny context: weave keywords into visual metaphors
-- For mood context: the emotional tone should dominate the visual mood
-- End with quality boosters: "cinematic lighting, hyperdetailed, 4K, professional"
+- NO people, NO figures, NO faces, NO silhouettes of humans — pure nature and cosmos only
+- Write a narrative prompt that paints a visual scene, 3-5 sentences
+- Include: lighting (golden hour/starlight/moonlight/etc), color palette, atmospheric mood, natural elements, cosmic details (constellation dots/lines, nebula hints, stardust)
+- The zodiac constellation (${zodiac.name}) should subtly glow in the night sky above the landscape
+- End with: "cinematic composition, ethereal atmosphere, dreamlike, 4K, hyperdetailed"
+- Make it feel MYSTICAL and MAGICAL — like a tarot card landscape meets astrophotography
 
 Return ONLY valid JSON:
 {
@@ -120,7 +119,7 @@ Return ONLY valid JSON:
   "styleDesc": "3-5 word style summary",
   "vibe": "one vibe word"
 }`,
-      'You are an award-winning portrait photographer turned AI prompt engineer. Your prompts are poetic narratives, not keyword lists. Each one tells a visual story. Never generic. English only.'
+      'You are a cosmic landscape artist. Your prompts paint breathtaking mystical nature scenes — starfields, ancient forests, crystal mountains, glowing seas. Never draw people. Every scene feels like a living tarot card, rich with celestial symbolism and natural wonder. English only.'
     );
     return safeParse(result);
   }
