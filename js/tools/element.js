@@ -42,7 +42,9 @@ Tools.element = (function() {
     if (selected.length !== 3) return;
     const chosen = selected.map(i => images[i].scene);
     App.showLoading('Reading your elemental aura...');
-    const result = await API.getElement(chosen);
+    let result;
+    try { result = await API.getElement(chosen); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     const elEmojis = { Fire:'🔥', Water:'💧', Earth:'🌍', Air:'💨' };

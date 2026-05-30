@@ -12,7 +12,9 @@ Tools.destiny = (function() {
     if (!birthday) { alert('Please enter your birthday'); return; }
 
     App.showLoading('Unveiling your destiny...');
-    const result = await API.getDestiny(name, birthday);
+    let result;
+    try { result = await API.getDestiny(name, birthday); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     const header = `<span class="result-zodiac">🔑</span>

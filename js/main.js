@@ -292,12 +292,19 @@ window.App = (function() {
     }
   }
 
+  /* ===== Error Display ===== */
+  function showError(message) {
+    const header = '<span class="result-zodiac">❌</span><div class="result-title">Something went wrong</div>';
+    const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">${message}</div></div>`;
+    showResult(header, '', content, null, null);
+  }
+
   return {
     initStars, initConstellations, initParticles, initMagicSymbols, animate,
     activateSplash,
     openTool, closeTool,
     showLoading, hideLoading,
-    showResult, closeResult, retryCurrentTool,
+    showResult, showError, closeResult, retryCurrentTool,
     showPortraitSurprise,
     currentTool
   };

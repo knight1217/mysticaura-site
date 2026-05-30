@@ -11,7 +11,9 @@ Tools.persona = (function() {
     if (!words) { alert('Please describe yourself in 3 words'); return; }
 
     App.showLoading('Crafting your persona...');
-    const result = await API.getPersona(words, platform);
+    let result;
+    try { result = await API.getPersona(words, platform); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     const platformNames = { instagram:'Instagram', twitter:'X/Twitter', tiktok:'TikTok', dating:'Dating Profile' };

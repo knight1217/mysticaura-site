@@ -1017,19 +1017,16 @@ Tools.tarot = (function() {
     try {
       result = await API.getTarot(drawnCards);
     } catch (e) {
-      result = null;
+      App.hideLoading();
+      App.showError(e.message);
+      return;
     }
     App.hideLoading();
 
     const positions = ['Past', 'Present', 'Future'];
 
-    // Generate rich reading
-    const rich = generateRichReading(drawnCards);
-
-    // If API returned meaningful reading text, use it; otherwise use rich fallback
-    const hasGoodReading = result && result.reading && result.reading.length > 80;
-    const readingText = hasGoodReading ? result.reading : rich.cardReadings.join('\n\n');
-    const adviceText = (result && result.advice && result.advice.length > 20) ? result.advice : rich.advice;
+    const readingText = result.reading;
+    const adviceText = result.advice;
 
     const header = `<span class="result-zodiac">✧</span>
       <div class="result-title">Your Tarot Reading</div>

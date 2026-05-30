@@ -53,7 +53,9 @@ Tools.compatibility = (function() {
   async function startReading() {
     if (!z1 || !z2) return;
     App.showLoading('Calculating cosmic alignment...');
-    const result = await API.getCompatibility(z1, z2);
+    let result;
+    try { result = await API.getCompatibility(z1, z2); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     const scoreColor = result.score > 75 ? '#8BC34A' : result.score > 55 ? '#FF9800' : '#E91E63';

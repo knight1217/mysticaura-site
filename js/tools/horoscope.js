@@ -64,7 +64,9 @@ Tools.horoscope = (function() {
   async function startReading() {
     if (!selectedZodiac || !selectedMood) return;
     App.showLoading('The stars are whispering...');
-    const result = await API.getHoroscope(selectedZodiac, selectedMood);
+    let result;
+    try { result = await API.getHoroscope(selectedZodiac, selectedMood); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     const header = `<span class="result-zodiac">${selectedZodiac.emoji}</span>

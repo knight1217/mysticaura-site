@@ -75,8 +75,9 @@ Tools.portrait = (function() {
 
     const loadingText = isSurprise ? 'The stars have a special gift for you...' : 'The stars are preparing your gift...';
     App.showLoading(loadingText);
-    
-    const result = await API.getPortrait(selectedZodiac, contextStr || null);
+    let result;
+    try { result = await API.getPortrait(selectedZodiac, contextStr || null); }
+    catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
     // Force portrait flow page to be scrollable
