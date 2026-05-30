@@ -60,40 +60,56 @@ async function handleChatProxy(request, env, corsOrigin) {
   }
 
   const body = await request.json();
+  const errors = [];
 
   // ========== ROUTE 1: Cloudflare Workers AI (free) ==========
   try {
     const cfResult = await tryCloudflareAI(body, env);
     if (cfResult) {
+      cfResult.engine = 'cf-ai';
       return jsonResponse(cfResult, 200, corsOrigin);
     }
   } catch (e) {
-    console.log('CF AI failed, falling back to DeepSeek:', e.message);
+    errors.push('CF_AI: ' + e.message);
+    console.log('CF AI failed:', e.message);
   }
 
   // ========== ROUTE 2: DeepSeek fallback ==========
-  return tryDeepSeek(body, env, corsOrigin);
+  try {
+    const dsResult = await tryDeepSeekRaw(body, env);
+    if (dsResult.ok) {
+      const data = dsResult.data;
+      if (data.choices) data.engine = 'deepseek';
+      return jsonResponse(data, 200, corsOrigin);
+    } else {
+      errors.push('DeepSeek: ' + (dsResult.error || 'unknown'));
+      return jsonResponse({ error: 'All engines failed', details: errors }, 502, corsOrigin);
+    }
+  } catch (e) {
+    errors.push('DeepSeek: ' + e.message);
+    return jsonResponse({ error: 'All engines failed', details: errors }, 502, corsOrigin);
+  }
 }
 
 /* ---- Cloudflare Workers AI ---- */
 async function tryCloudflareAI(body, env) {
   // Workers AI needs the AI binding
   if (!env.AI) {
-    throw new Error('AI binding not configured');
+    throw new Error('CF_AI: binding not configured');
   }
 
   const messages = body.messages || [];
   const temperature = body.temperature || 0.9;
   const max_tokens = body.max_tokens || 800;
 
-  const result = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
     messages,
     temperature,
     max_tokens
   });
 
   if (!result || !result.response) {
-    throw new Error('Empty CF AI response');
+    throw new Error('CF_AI: empty response — ' + JSON.stringify(result));
   }
 
   // Convert CF AI response → OpenAI-compatible format for frontend
@@ -104,12 +120,12 @@ async function tryCloudflareAI(body, env) {
   };
 }
 
-/* ---- DeepSeek fallback ---- */
-async function tryDeepSeek(body, env, corsOrigin) {
+/* ---- DeepSeek (returns raw result for handleChatProxy) ---- */
+async function tryDeepSeekRaw(body, env) {
   const apiKey = env.DEEPSEEK_API_KEY;
 
   if (!apiKey) {
-    return jsonResponse({ error: 'API key not configured' }, 500, corsOrigin);
+    return { ok: false, error: 'DEEPSEEK_API_KEY not configured' };
   }
 
   if (!body.model) {
@@ -127,9 +143,14 @@ async function tryDeepSeek(body, env, corsOrigin) {
     });
 
     const data = await resp.json();
-    return jsonResponse(data, resp.status, corsOrigin);
+    
+    if (!resp.ok) {
+      return { ok: false, error: `HTTP ${resp.status}: ${JSON.stringify(data)}` };
+    }
+    
+    return { ok: true, data };
   } catch (e) {
-    return jsonResponse({ error: 'Upstream API error' }, 502, corsOrigin);
+    return { ok: false, error: e.message };
   }
 }
 

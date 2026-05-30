@@ -30,11 +30,14 @@ window.API = (function() {
     });
 
     if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('API error', resp.status, errText);
       throw new Error('Please try again');
     }
 
     const data = await resp.json();
     if (!data.choices?.[0]?.message?.content) {
+      console.error('API: no content in response', JSON.stringify(data).slice(0, 200));
       throw new Error('Please try again');
     }
     return data.choices[0].message.content;
