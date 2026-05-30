@@ -113,7 +113,8 @@ CRITICAL RULES:
 - COMPOSITION: keep the frame open and balanced. No dense dark elements (heavy trees, thick shadows) blocking either side of the image. Light should reach all corners.
 - LANDSCAPE: natural organic curves — winding rivers, meandering paths, irregular shorelines. Nothing that looks artificially straight or perfectly symmetrical.
 - MAGIC: scatter visible floating stardust motes, bioluminescent particles, or tiny drifting lights throughout the air — subtle but clearly present, making the scene feel enchanted rather than plain nature photography.
-- End with: "cinematic composition, ethereal atmosphere, dreamlike, 4K, hyperdetailed"
+- ASPECT RATIO: 9:16 portrait / vertical orientation — optimized for phone wallpapers and social media (Instagram Story, TikTok). The scene should compose naturally in a tall vertical frame, with key cosmic elements (constellation, stardust) in the upper third and the landscape unfolding below.
+- End with: "9:16 vertical portrait, cinematic composition, ethereal atmosphere, dreamlike, 4K, hyperdetailed"
 - Make it feel MYSTICAL and MAGICAL — like a tarot card landscape meets astrophotography
 
 Return ONLY valid JSON:
