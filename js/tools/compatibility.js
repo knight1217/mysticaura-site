@@ -81,8 +81,8 @@ Tools.compatibility = (function() {
       </div>` : ''}
       ${result.scenarios ? `<div class="fortune-section">
         <div class="fortune-label">✦ Perfect Date Ideas</div>
-        <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
-          ${result.scenarios.split('\n').filter(s => s.trim()).map(s => `<div class="detail-item" style="text-align:left;padding:16px 20px;display:flex;align-items:flex-start;gap:12px;"><div class="detail-icon" style="flex-shrink:0;margin-bottom:0;">✦</div><div class="detail-value" style="font-size:0.88rem;line-height:1.7;margin-top:0;text-align:left;">${s.trim()}</div></div>`).join('')}
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          ${result.scenarios.split('\n').filter(s => s.trim()).map((s, i) => `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.5);border:1px solid rgba(155,123,184,0.15);border-radius:12px;"><div style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:rgba(212,165,116,0.15);border-radius:50%;font-size:0.8rem;color:var(--warm-gold);">${i+1}</div><div style="font-size:0.85rem;line-height:1.55;color:var(--text-main);text-align:left;">${s.trim()}</div></div>`).join('')}
         </div>
       </div>` : ''}`;
 

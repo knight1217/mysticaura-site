@@ -8,20 +8,27 @@ Tools.portrait = (function() {
     document.getElementById('portrait-proceed').disabled = true;
 
     // Check if this is a surprise mode activation
-    const surpriseZodiac = window._portraitSurpriseZodiac;
+    let surpriseZodiac = window._portraitSurpriseZodiac;
+    
+    // Fallback: if zodiac was consumed but context still has z1 (e.g. after Try Again)
+    if (!surpriseZodiac && window._portraitSurpriseContext && window._portraitSurpriseContext.z1) {
+      surpriseZodiac = window._portraitSurpriseContext.z1;
+    }
+    
     if (surpriseZodiac) {
       delete window._portraitSurpriseZodiac;
 
-      // Find the matching zodiac from data
       const D = window.__DATA__;
       const match = D.zodiacs.find(z => z.name === surpriseZodiac);
       if (match) {
         selectedZodiac = match;
-        // Skip zodiac picker, start reading immediately with special text
+        // Hide zodiac picker immediately to prevent flash
+        document.getElementById('portrait-zodiac-grid').innerHTML = '';
+        document.getElementById('portrait-proceed').disabled = true;
+        document.getElementById('portrait-zodiac-picker').style.opacity = '0.3';
         startReading(true);
         return;
       }
-      // If no match found, fall through to normal zodiac picker
     }
 
     const grid = document.getElementById('portrait-zodiac-grid');
@@ -32,6 +39,8 @@ Tools.portrait = (function() {
     // Remove any existing note
     const existingNote = picker.querySelector('.surprise-note');
     if (existingNote) existingNote.remove();
+    // Restore full opacity (may have been dimmed by surprise mode)
+    picker.style.opacity = '1';
     if (surpriseZodiac) {
       const note = document.createElement('div');
       note.className = 'surprise-note';
