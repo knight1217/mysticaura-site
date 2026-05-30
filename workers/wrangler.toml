@@ -3,6 +3,10 @@ name = "mysticaura-api-proxy"
 main = "api-proxy.js"
 compatibility_date = "2025-05-30"
 
+# Cloudflare Workers AI binding (free, no setup needed)
+[ai]
+binding = "AI"
+
 # Optional: KV for rate limiting
 # [[kv_namespaces]]
 # binding = "MYSTIC_RATE"
