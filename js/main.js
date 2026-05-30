@@ -209,6 +209,7 @@ window.App = (function() {
     if (!flow) return;
     currentTool = name;
     document.querySelectorAll('.flow-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('resultPage').classList.remove('active');
     flow.classList.add('active');
 
     // Dispatch event for tools to initialize
@@ -248,10 +249,11 @@ window.App = (function() {
     // Build action buttons (small, centered)
     let buttonsHTML = '';
     if (extraActions) buttonsHTML += extraActions;
-    buttonsHTML += `<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <button class="action-btn" onclick="App.retryCurrentTool()">Try Again ✧</button>
-      <button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button>
-    </div>`;
+    buttonsHTML += `<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">`;
+    if (currentTool) {
+      buttonsHTML += `<button class="action-btn" onclick="App.retryCurrentTool()">Try Again ✧</button>`;
+    }
+    buttonsHTML += `<button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button></div>`;
     document.getElementById('resultActions').innerHTML = buttonsHTML;
 
     // Surprise card goes into its own container (outside resultActions)
@@ -282,6 +284,7 @@ window.App = (function() {
 
   function closeResult() {
     document.getElementById('resultPage').classList.remove('active');
+    document.getElementById('main-content').classList.add('visible');
     currentTool = null;
   }
 
@@ -306,7 +309,7 @@ window.App = (function() {
     showLoading, hideLoading,
     showResult, showError, closeResult, retryCurrentTool,
     showPortraitSurprise,
-    currentTool
+    get currentTool() { return currentTool; }
   };
 })();
 
