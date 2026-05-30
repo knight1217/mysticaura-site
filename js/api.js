@@ -3,7 +3,7 @@ window.API = (function() {
   const D = window.__DATA__;
 
   // API Proxy — Cloudflare Worker (Key never exposed to browser)
-  const PROXY_URL = 'https://mystic-proxy.butzyjj.workers.dev/api/chat';
+  const PROXY_URL = 'https://mysticaura-api-proxy.butzyjj.workers.dev/api/chat';
 
   /* ===== Random helpers ===== */
   function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
