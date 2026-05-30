@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MysticAura — Unveil Your Inner Magic</title>
+<link rel="stylesheet" href="css/style.css">
+<!-- Open Graph for social sharing -->
+<meta property="og:title" content="MysticAura — Unveil Your Inner Magic">
+<meta property="og:description" content="Your stars, your mood, your mystic portrait — freshly brewed by AI.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+<canvas id="constellationCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
+<div class="magic-symbol-layer" id="magicSymbolLayer"></div>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash" onclick="App.activateSplash(event)">
+  <div class="crystal-container" style="position:relative;z-index:1;">
+    <div class="magic-ring"></div>
+    <div class="crystal-ball"></div>
+    <div class="rune-ring">
+      <span class="rune">☽</span><span class="rune">✦</span><span class="rune">☀</span><span class="rune">♃</span>
+      <span class="rune">☿</span><span class="rune">♄</span><span class="rune">⚶</span><span class="rune">✧</span>
+    </div>
+  </div>
+  <div class="splash-cta" style="position:relative;z-index:1;">
+    <div class="splash-title">MysticAura</div>
+    <div class="splash-sub">··· touch the crystal ···</div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div id="main-content">
+  <div class="header">
+    <div class="logo-icon">🔮</div>
+    <h1 class="site-title">MysticAura</h1>
+    <p class="site-subtitle">Unveil Your Inner Magic</p>
+    <div class="constellation-divider">
+      <span class="line"></span><span class="symbol">☽</span><span class="line"></span><span class="symbol">✧</span><span class="line"></span><span class="symbol">☀</span><span class="line"></span>
+    </div>
+  </div>
+
+  <div class="tools-grid">
+    <div class="tool-card" onclick="App.openTool('horoscope')">
+      <div class="tool-emoji">🌟</div>
+      <div class="tool-info">
+        <div class="tool-name">Daily Horoscope</div>
+        <div class="tool-desc">Your stars, your mood, your fortune — freshly brewed by AI every day.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+    <div class="tool-card" onclick="App.openTool('compatibility')">
+      <div class="tool-emoji">💫</div>
+      <div class="tool-info">
+        <div class="tool-name">Zodiac Compatibility</div>
+        <div class="tool-desc">Are you and your crush written in the stars? Find out your cosmic match score.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+    <div class="tool-card" onclick="App.openTool('destiny')">
+      <div class="tool-emoji">🔑</div>
+      <div class="tool-info">
+        <div class="tool-name">Destiny Keywords</div>
+        <div class="tool-desc">Your name + birthday unveils your fate's hidden theme words.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+    <div class="tool-card" onclick="App.openTool('element')">
+      <div class="tool-emoji">🔥</div>
+      <div class="tool-info">
+        <div class="tool-name">Inner Element</div>
+        <div class="tool-desc">Fire, Water, Earth, or Air — which force beats at your core?</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+    <div class="tool-card" onclick="App.openTool('persona')">
+      <div class="tool-emoji">✨</div>
+      <div class="tool-info">
+        <div class="tool-name">Persona Tags &amp; Bio</div>
+        <div class="tool-desc">Describe yourself in 3 words → get your social persona + ready-to-copy bio.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+    <div class="tool-card" onclick="App.openTool('tarot')">
+      <div class="tool-emoji">🃏</div>
+      <div class="tool-info">
+        <div class="tool-name">Tarot Reading</div>
+        <div class="tool-desc">Hold a question in your heart. Let the cards speak their ancient wisdom.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="site-footer">
+    <div class="symbols">☽ ✧ ☀ ✧ ☽</div>
+    Each reading is unique — generated fresh by AI every time.
+  </div>
+</div>
+
+<!-- ===== FLOW PAGES (TOOLS) ===== -->
+<!-- 1. Horoscope -->
+<div class="flow-page" id="flow-horoscope">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Daily Horoscope</div>
+  <div class="flow-subtitle" id="horoscope-step-label">Step 1 — Pick your zodiac sign</div>
+  <div id="horoscope-step1"><div class="zodiac-grid" id="horoscope-zodiac-grid"></div></div>
+  <div id="horoscope-mood-spacer" style="display:none; height:32px;"></div>
+  <div id="horoscope-step2" style="display:none;"><div class="mood-grid" id="horoscope-mood-grid"></div></div>
+  <button class="proceed-btn" id="horoscope-proceed" disabled onclick="Tools.horoscope.startReading()">Reveal My Fortune ✧</button>
+</div>
+
+<!-- 2. Compatibility -->
+<div class="flow-page" id="flow-compatibility">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Zodiac Compatibility</div>
+  <div class="flow-subtitle" id="compat-step-label">Pick your sign</div>
+  <div id="compat-step1"><div class="zodiac-grid" id="compat-zodiac-1"></div></div>
+  <div class="zodiac-separator" id="compat-separator" style="display:none;">
+    <span class="separator-line"></span>
+    <span class="separator-text">match with</span>
+    <span class="separator-line"></span>
+  </div>
+  <div id="compat-step2" style="display:none;"><div class="zodiac-grid" id="compat-zodiac-2"></div></div>
+  <button class="proceed-btn" id="compat-proceed" disabled onclick="Tools.compatibility.startReading()">Reveal Match ✧</button>
+</div>
+
+<!-- 3. Destiny -->
+<div class="flow-page" id="flow-destiny">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Destiny Keywords</div>
+  <div class="flow-subtitle">Enter your name and birthday</div>
+  <div style="max-width:400px;width:100%;">
+    <input type="text" id="destiny-name" placeholder="Your name" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);margin-bottom:14px;outline:none;">
+    <input type="date" id="destiny-birthday" class="date-input" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);outline:none;">
+  </div>
+  <button class="proceed-btn" id="destiny-proceed" onclick="Tools.destiny.startReading()">Reveal My Keywords ✧</button>
+</div>
+
+<!-- 4. Element -->
+<div class="flow-page" id="flow-element">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Inner Element</div>
+  <div class="flow-subtitle">Pick 3 images that speak to your soul</div>
+  <div class="element-img-grid" id="element-img-grid"></div>
+  <button class="proceed-btn" id="element-proceed" disabled onclick="Tools.element.startReading()">Reveal My Element ✧</button>
+</div>
+
+<!-- 5. Persona -->
+<div class="flow-page" id="flow-persona">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Persona Tags &amp; Bio</div>
+  <div class="flow-subtitle">Describe yourself in 3 words</div>
+  <div style="max-width:400px;width:100%;">
+    <input type="text" id="persona-input" placeholder="e.g. dreamy, stubborn, creative" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);margin-bottom:14px;outline:none;">
+    <select id="persona-platform" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);outline:none;">
+      <option value="instagram">Instagram Bio</option>
+      <option value="twitter">Twitter / X Bio</option>
+      <option value="tiktok">TikTok Bio</option>
+      <option value="dating">Dating Profile</option>
+    </select>
+  </div>
+  <button class="proceed-btn" id="persona-proceed" onclick="Tools.persona.startReading()">Generate My Persona ✧</button>
+</div>
+
+<!-- 6. Portrait Gift -->
+<div class="flow-page" id="flow-portrait">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Mystic Portrait Gift</div>
+  <div class="flow-subtitle">The stars have a gift for you</div>
+  <div style="max-width:400px;width:100%;margin-bottom:20px;" id="portrait-zodiac-picker">
+    <div class="zodiac-grid" id="portrait-zodiac-grid"></div>
+  </div>
+  <button class="proceed-btn" id="portrait-proceed" disabled onclick="Tools.portrait.startReading()">Open My Gift 🎁</button>
+</div>
+
+<!-- 7. Tarot -->
+<div class="flow-page" id="flow-tarot">
+  <button class="back-btn" onclick="App.closeTool()">← Back</button>
+  <div class="flow-title">Tarot Reading</div>
+  <div class="flow-subtitle">Focus on your question, then tap each card</div>
+  <div class="tarot-spread" id="tarot-spread"></div>
+  <button class="proceed-btn" id="tarot-proceed" disabled onclick="Tools.tarot.startReading()">Reveal Reading ✧</button>
+</div>
+
+<!-- ===== LOADING ===== -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-crystal"></div>
+  <div class="loading-text" id="loadingText">The stars are whispering...</div>
+  <div class="loading-orbs">
+    <div class="loading-orb"></div><div class="loading-orb"></div><div class="loading-orb"></div>
+  </div>
+</div>
+
+<!-- ===== RESULT PAGE ===== -->
+<div class="result-page" id="resultPage">
+  <div class="result-header" id="resultHeader"></div>
+  <div class="tag-cloud" id="tagCloud"></div>
+  <div class="fortune-card" id="fortuneCard"></div>
+  <div class="result-actions" id="resultActions">
+    <button class="action-btn" onclick="App.retryCurrentTool()">Try Again ✧</button>
+    <button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button>
+  </div>
+  <div class="surprise-container" id="surpriseContainer"></div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/tools/horoscope.js"></script>
+<script src="js/tools/compatibility.js"></script>
+<script src="js/tools/destiny.js"></script>
+<script src="js/tools/element.js"></script>
+<script src="js/tools/persona.js"></script>
+<script src="js/tools/portrait.js"></script>
+<script src="js/tools/tarot.js"></script>
+</body>
+</html>

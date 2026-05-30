@@ -1,0 +1,13 @@
+# MysticAura Worker
+name = "mysticaura-api-proxy"
+main = "api-proxy.js"
+compatibility_date = "2025-05-30"
+
+# Optional: KV for rate limiting
+# [[kv_namespaces]]
+# binding = "MYSTIC_RATE"
+# id = "your-kv-id"
+
+[vars]
+# Set via: npx wrangler secret put GEMINI_API_KEY
+# GEMINI_API_KEY = "your-key-here"
