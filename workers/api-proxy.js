@@ -1,5 +1,5 @@
 /* ===== Cloudflare Worker: API Proxy =====
- * Protects Gemini API Key + enforces IP-based rate limiting
+ * Protects DeepSeek API Key + enforces IP-based rate limiting
  * Deploy: npx wrangler deploy
  */
 
@@ -35,25 +35,24 @@ export default {
       });
     }
 
-    // Gemini proxy endpoint
-    if (url.pathname === '/api/gemini' && request.method === 'POST') {
-      return handleGeminiProxy(request, env, corsOrigin);
+    // DeepSeek chat proxy endpoint
+    if (url.pathname === '/api/chat' && request.method === 'POST') {
+      return handleDeepSeekProxy(request, env, corsOrigin);
     }
 
     return new Response('Not Found', { status: 404 });
   }
 };
 
-async function handleGeminiProxy(request, env, corsOrigin) {
-  // IP rate limiting
+async function handleDeepSeekProxy(request, env, corsOrigin) {
+  // IP rate limiting (optional KV-based, 50 req/day per IP)
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
   const today = new Date().toISOString().split('T')[0];
 
-  // Simple rate limit using KV (optional — remove if no KV binding)
   if (env.MYSTIC_RATE) {
     const key = `rate:${ip}:${today}`;
     const count = parseInt(await env.MYSTIC_RATE.get(key) || '0');
-    if (count >= 30) {
+    if (count >= 50) {
       return new Response(JSON.stringify({ error: 'Daily limit reached. Try again tomorrow!' }), {
         status: 429,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': corsOrigin }
@@ -63,21 +62,29 @@ async function handleGeminiProxy(request, env, corsOrigin) {
   }
 
   const body = await request.json();
-  const geminiKey = env.GEMINI_API_KEY;
+  const apiKey = env.DEEPSEEK_API_KEY;
 
-  if (!geminiKey) {
+  if (!apiKey) {
     return new Response(JSON.stringify({ error: 'API key not configured' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': corsOrigin }
     });
   }
 
-  const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + geminiKey;
+  // Ensure model is set
+  if (!body.model) {
+    body.model = 'deepseek-chat';
+  }
+
+  const deepseekUrl = 'https://api.deepseek.com/v1/chat/completions';
 
   try {
-    const resp = await fetch(geminiUrl, {
+    const resp = await fetch(deepseekUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
       body: JSON.stringify(body)
     });
 

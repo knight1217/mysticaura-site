@@ -9,5 +9,5 @@ compatibility_date = "2025-05-30"
 # id = "your-kv-id"
 
 [vars]
-# Set via: npx wrangler secret put GEMINI_API_KEY
-# GEMINI_API_KEY = "your-key-here"
+# Set via: npx wrangler secret put DEEPSEEK_API_KEY
+# DEEPSEEK_API_KEY = "your-key-here"

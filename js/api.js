@@ -1,24 +1,27 @@
-/* ===== API Layer ===== */
+/* ===== API Layer — DeepSeek via Cloudflare Worker Proxy ===== */
 window.API = (function() {
   const D = window.__DATA__;
 
   // API Proxy — Cloudflare Worker (Key never exposed to browser)
-  const PROXY_URL = 'https://mystic-proxy.butzyjj.workers.dev/api/gemini';
+  const PROXY_URL = 'https://mystic-proxy.butzyjj.workers.dev/api/chat';
 
   /* ===== Random helpers ===== */
   function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-  /* ===== Gemini API Call ===== */
-  async function callGemini(prompt, systemInstruction) {
-    const contents = [{
-      role: 'user',
-      parts: [{ text: prompt }]
-    }];
-
-    const body = { contents };
+  /* ===== DeepSeek API Call (OpenAI-compatible format) ===== */
+  async function callAI(prompt, systemInstruction) {
+    const messages = [];
     if (systemInstruction) {
-      body.systemInstruction = { parts: [{ text: systemInstruction }] };
+      messages.push({ role: 'system', content: systemInstruction });
     }
+    messages.push({ role: 'user', content: prompt });
+
+    const body = {
+      model: 'deepseek-chat',
+      messages: messages,
+      temperature: 0.9,
+      max_tokens: 800
+    };
 
     const resp = await fetch(PROXY_URL, {
       method: 'POST',
@@ -31,10 +34,10 @@ window.API = (function() {
     }
 
     const data = await resp.json();
-    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+    if (!data.choices?.[0]?.message?.content) {
       throw new Error('Please try again');
     }
-    return data.candidates[0].content.parts[0].text;
+    return data.choices[0].message.content;
   }
 
   function safeParse(text) {
@@ -44,7 +47,7 @@ window.API = (function() {
 
   /* ===== Horoscope ===== */
   async function getHoroscope(sign, mood) {
-    const result = await callGemini(
+    const result = await callAI(
       `Generate a personalized daily horoscope for ${sign.name} (${sign.emoji}, ${sign.element} element) who is feeling "${mood.name}" (${mood.desc}) today.\n\nReturn ONLY valid JSON:\n{\n  "reading": "detailed fortune reading, 3-5 sentences, warm and personal tone",\n  "advice": "practical cosmic advice, 1 sentence",\n  "keywords": ["word1", "word2", "word3", "word4"],\n  "color": "a lucky color name",\n  "moon": "moon phase",\n  "lucky": number,\n  "element": "Fire/Water/Earth/Air/Ether/Light/Shadow"\n}`,
       'You are a poetic, warm astrologer. Write beautifully, warmly, specifically to the zodiac sign. Use mystical but accessible language. Never generic. English only.'
     );
@@ -53,7 +56,7 @@ window.API = (function() {
 
   /* ===== Compatibility ===== */
   async function getCompatibility(z1, z2) {
-    const result = await callGemini(
+    const result = await callAI(
       `Analyze zodiac compatibility between ${z1.name} (${z1.emoji}, ${z1.element}) and ${z2.name} (${z2.emoji}, ${z2.element}).\n\nReturn ONLY valid JSON:\n{\n  "score": number between 30-98,\n  "rating": "short phrase describing the match",\n  "reading": "detailed compatibility reading, 2-3 sentences, warm tone",\n  "advice": "relationship advice, 1 sentence",\n  "complement": "how these signs balance each other — what ${z1.name} gives ${z2.name} and what ${z2.name} gives ${z1.name}, 2-3 sentences",\n  "scenarios": "3 recommended date or activity scenarios, one per line, separated by newlines"\n}`,
       'You are a warm, insightful relationship astrologer. Be specific about each zodiac combination. Avoid generic fluff. English only.'
     );
@@ -62,7 +65,7 @@ window.API = (function() {
 
   /* ===== Destiny ===== */
   async function getDestiny(name, birthday) {
-    const result = await callGemini(
+    const result = await callAI(
       `Generate 3 mystical "destiny keywords" for someone named "${name}" born on ${birthday}.\n\nReturn ONLY valid JSON:\n{\n  "keywords": ["word1", "word2", "word3"],\n  "reading": "poetic interpretation, 2-3 sentences",\n  "element": "Fire/Water/Earth/Air"\n}`,
       'You are a mystical name and birthday interpreter. Keywords should be evocative, poetic English words (like luminous, shadow, eternal, wild, sacred, etc.). Be creative and non-generic. English only.'
     );
@@ -71,7 +74,7 @@ window.API = (function() {
 
   /* ===== Element ===== */
   async function getElement(selected) {
-    const result = await callGemini(
+    const result = await callAI(
       `Based on image choices: ${selected.join(', ')}, determine the user's inner element (Fire/Water/Earth/Air).\n\nReturn ONLY valid JSON:\n{\n  "element": "Fire/Water/Earth/Air",\n  "emoji": "corresponding emoji",\n  "reading": "detailed element reading, 2-3 sentences, warm and mystical tone",\n  "traits": ["trait1", "trait2", "trait3"]\n}`,
       'You are an elemental mystic. Interpret image choices as revealing a person\'s dominant inner element. Be poetic and insightful. English only.'
     );
@@ -81,7 +84,7 @@ window.API = (function() {
   /* ===== Persona ===== */
   async function getPersona(words, platform) {
     const platformNames = { instagram:'Instagram', twitter:'X/Twitter', tiktok:'TikTok', dating:'dating profile' };
-    const result = await callGemini(
+    const result = await callAI(
       `Create a social media persona for someone described as "${words}". Platform: ${platformNames[platform] || 'social media'}.\n\nReturn ONLY valid JSON:\n{\n  "tags": ["#tag1", "#tag2", "#tag3"],\n  "bio": "the full bio text optimized for this platform",\n  "reading": "short persona reading, 1-2 sentences"\n}`,
       'You are a social media persona expert. Create on-brand bios that feel authentic, not cringe. Use the right tone for each platform. English only.'
     );
@@ -102,7 +105,7 @@ window.API = (function() {
       contextDescription = `Element: ${ctxObj.element || zodiac.element}. Build the scene entirely around this element — fire = volcanic glow + ember-lit sky, water = moonlit ocean + bioluminescence, earth = ancient forest + moss-covered stones, air = cloudscapes + aurora ribbons.`;
     }
 
-    const result = await callGemini(
+    const result = await callAI(
       `Create ONE stunning AI image prompt for a MYSTICAL COSMIC LANDSCAPE based on zodiac sign ${zodiac.name} (${zodiac.emoji}, ${zodiac.element}).${contextDescription ? '\n\n' + contextDescription : ''}
 
 CRITICAL RULES:
@@ -131,7 +134,7 @@ Return ONLY valid JSON:
   /* ===== Tarot ===== */
   async function getTarot(cards) {
     const cardList = cards.map(c => `${c.name} (${c.emoji})`).join(', ');
-    const result = await callGemini(
+    const result = await callAI(
       `Give a tarot reading for these 3 cards (Past, Present, Future): ${cardList}.\n\nReturn ONLY valid JSON:\n{\n  "reading": "detailed reading, one paragraph per card (Past/Present/Future), warm and insightful tone",\n  "advice": "overall guidance, 1-2 sentences"\n}`,
       'You are a wise, compassionate tarot reader. Interpret cards meaningfully, connecting them into a coherent narrative. Be specific, not generic. English only.'
     );
