@@ -112,16 +112,12 @@ window.API = (function() {
       `Create ONE stunning AI image prompt for a MYSTICAL COSMIC LANDSCAPE based on zodiac sign ${zodiac.name} (${zodiac.emoji}, ${zodiac.element}).${contextDescription ? '\n\n' + contextDescription : ''}
 
 CRITICAL RULES:
-- NO people, NO figures, NO faces, NO silhouettes of humans — pure nature and cosmos only
-- Write a narrative prompt that paints a visual scene, 4-6 sentences
-- Include: lighting (golden hour/starlight/moonlight/etc), color palette, atmospheric mood, natural elements, cosmic details (constellation dots/lines, nebula hints, stardust)
-- The zodiac constellation (${zodiac.name}) should subtly glow in the night sky above the landscape
-- COMPOSITION: keep the frame open and balanced. No dense dark elements (heavy trees, thick shadows) blocking either side of the image. Light should reach all corners.
-- LANDSCAPE: natural organic curves — winding rivers, meandering paths, irregular shorelines. Nothing that looks artificially straight or perfectly symmetrical.
-- MAGIC: scatter visible floating stardust motes, bioluminescent particles, or tiny drifting lights throughout the air — subtle but clearly present, making the scene feel enchanted rather than plain nature photography.
-- ASPECT RATIO: 9:16 portrait / vertical orientation — optimized for phone wallpapers and social media (Instagram Story, TikTok). The scene should compose naturally in a tall vertical frame, with key cosmic elements (constellation, stardust) in the upper third and the landscape unfolding below.
-- End with: "9:16 vertical portrait, cinematic composition, ethereal atmosphere, dreamlike, 4K, hyperdetailed"
-- Make it feel MYSTICAL and MAGICAL — like a tarot card landscape meets astrophotography
+- ABSOLUTELY NO people, figures, faces, or human silhouettes — pure nature and cosmos only
+- 9:16 VERTICAL COMPOSITION — tall vertical frame optimized for phone wallpaper. Constellation + stardust in UPPER THIRD, landscape below. Vertical flow, never horizontal. Firmly 9:16 portrait.
+- MAGICAL/ETHEREAL atmosphere — floating stardust motes, bioluminescent particles, soft glowing light throughout. Dreamlike, enchanted, living tarot card quality.
+- STYLE: cinematic astrophotography, wide-angle lens, photorealistic, ethereal lighting, hyperdetailed
+- Include: specific lighting (golden hour / starlight / moonlight / aurora), rich color palette, zodiac constellation subtly glowing in night sky
+- End EVERY prompt with: "9:16 vertical portrait, cinematic composition, ethereal dreamlike atmosphere, astrophotography, 4K, hyperdetailed — vertical phone wallpaper"
 
 Return ONLY valid JSON:
 {
@@ -129,7 +125,7 @@ Return ONLY valid JSON:
   "styleDesc": "3-5 word style summary",
   "vibe": "one vibe word"
 }`,
-      'You are a cosmic landscape artist. Your prompts paint breathtaking mystical nature scenes — starfields, ancient forests, crystal mountains, glowing seas. Never draw people. Every scene feels like a living tarot card, rich with celestial symbolism and natural wonder. English only.'
+      'You are a master cosmic landscape prompt engineer. Your prompts generate breathtaking 9:16 vertical mystical nature scenes — no people, pure cosmos + nature. Every prompt forces 9:16 vertical phone-wallpaper composition. Style: cinematic astrophotography, ethereal, magical, hyperdetailed. English only.'
     );
     return safeParse(result);
   }
@@ -147,7 +143,7 @@ Return ONLY valid JSON:
   /* ===== Pollinations image URL ===== */
   function getPollinationsUrl(prompt) {
     const encoded = encodeURIComponent(prompt);
-    return `https://image.pollinations.ai/prompt/${encoded}?width=768&height=768&model=flux&nologo=true&seed=${randInt(1,9999)}&enhance=true`;
+    return `https://image.pollinations.ai/prompt/${encoded}?width=576&height=1024&model=flux&nologo=true&seed=${randInt(1,9999)}&enhance=true`;
   }
 
   // Public API
