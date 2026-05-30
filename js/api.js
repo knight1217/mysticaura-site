@@ -107,9 +107,12 @@ window.API = (function() {
 
 CRITICAL RULES:
 - NO people, NO figures, NO faces, NO silhouettes of humans — pure nature and cosmos only
-- Write a narrative prompt that paints a visual scene, 3-5 sentences
+- Write a narrative prompt that paints a visual scene, 4-6 sentences
 - Include: lighting (golden hour/starlight/moonlight/etc), color palette, atmospheric mood, natural elements, cosmic details (constellation dots/lines, nebula hints, stardust)
 - The zodiac constellation (${zodiac.name}) should subtly glow in the night sky above the landscape
+- COMPOSITION: keep the frame open and balanced. No dense dark elements (heavy trees, thick shadows) blocking either side of the image. Light should reach all corners.
+- LANDSCAPE: natural organic curves — winding rivers, meandering paths, irregular shorelines. Nothing that looks artificially straight or perfectly symmetrical.
+- MAGIC: scatter visible floating stardust motes, bioluminescent particles, or tiny drifting lights throughout the air — subtle but clearly present, making the scene feel enchanted rather than plain nature photography.
 - End with: "cinematic composition, ethereal atmosphere, dreamlike, 4K, hyperdetailed"
 - Make it feel MYSTICAL and MAGICAL — like a tarot card landscape meets astrophotography
 
