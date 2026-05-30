@@ -88,14 +88,13 @@ Tools.portrait = (function() {
     catch (e) { App.hideLoading(); App.showError(e.message); return; }
     App.hideLoading();
 
-    // Force portrait flow page to be scrollable
+    // Portrait result uses natural page flow (no forced scroll)
     const flowPage = document.getElementById('flow-portrait');
     if (flowPage) {
-      flowPage.style.overflowY = 'scroll'; // NOT auto — force scrollbar
-      flowPage.style.overflowX = 'hidden';
-      flowPage.style.height = '100vh';
-      flowPage.style.WebkitOverflowScrolling = 'touch';
-      flowPage.style.paddingBottom = '60px';
+      flowPage.style.overflowY = '';
+      flowPage.style.overflowX = '';
+      flowPage.style.height = '';
+      flowPage.style.paddingBottom = '';
     }
 
     const platformHTML = buildPlatformCards(result.prompt, result.tier);
