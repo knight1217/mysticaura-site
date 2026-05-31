@@ -772,10 +772,10 @@ body::before {
 
 /* ===== Element Image Selection — V3 SVG Art ===== */
 .element-img-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-  max-width: 360px; width: 100%; padding: 0 4px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  max-width: 300px; width: 100%; padding: 0 2px;
 }
-@media (max-width: 480px) { .element-img-grid { gap: 6px; max-width: 330px; } }
+@media (max-width: 480px) { .element-img-grid { gap: 5px; max-width: 280px; } }
 
 .element-img-card {
   display: flex; flex-direction: column; align-items: center; justify-content: space-between;
@@ -788,7 +788,7 @@ body::before {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
   box-shadow: 0 2px 14px rgba(155,123,184,0.07);
-  aspect-ratio: 4/3;
+  aspect-ratio: 9/16;
 }
 .element-img-card .img-svg-wrap {
   width: 90%; flex: 1;
