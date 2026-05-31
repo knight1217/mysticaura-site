@@ -127,7 +127,12 @@ Return ONLY valid JSON:
 }`,
       'You are a master cosmic landscape prompt engineer. Your prompts generate breathtaking 9:16 vertical mystical nature scenes — no people, pure cosmos + nature. Every prompt forces 9:16 vertical phone-wallpaper composition. Style: cinematic astrophotography, ethereal, magical, hyperdetailed. English only.'
     );
-    return safeParse(result);
+    const parsed = safeParse(result);
+    // Force 9:16 into prompt — AI sometimes ignores the instruction
+    if (parsed && parsed.prompt && !parsed.prompt.toLowerCase().includes('9:16')) {
+      parsed.prompt += '\n\n9:16 vertical portrait, cinematic composition, ethereal dreamlike atmosphere, astrophotography, 4K, hyperdetailed — vertical phone wallpaper';
+    }
+    return parsed;
   }
 
   /* ===== Tarot ===== */
