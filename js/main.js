@@ -243,17 +243,29 @@ window.App = (function() {
     }
     
     window._portraitSurpriseZodiac = zSign;
-    // Store context for portrait.js to read
+    // Store context for portrait.js to read — include _zodiac for Try Again fallback
+    ctx._zodiac = zSign;
     window._portraitSurpriseContext = ctx;
     // Open the portrait flow directly
     openTool('portrait');
   }
 
+  /* ===== Text Sanitizer — strip problematic Unicode from AI output ===== */
+  function sanitizeText(str) {
+    if (!str || typeof str !== 'string') return str;
+    // Strip only truly problematic characters: control chars (except \n\t\r), 
+    // zero-width chars, variation selectors, and characters outside all planes (U+E0000+)
+    return str
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '') // control chars
+      .replace(/[\u200B-\u200F\u2028-\u202F\uFEFF\uFFF0-\uFFFF]/g, '')       // zero-width / BOM / specials
+      .replace(/[\u{E0000}-\u{EFFFF}]/gu, '');                                // Unicode tags area
+  }
+
   /* ===== Result Page ===== */
   function showResult(header, tags, content, extraActions, showSurprise) {
-    document.getElementById('resultHeader').innerHTML = header;
-    document.getElementById('tagCloud').innerHTML = tags;
-    document.getElementById('fortuneCard').innerHTML = content;
+    document.getElementById('resultHeader').innerHTML = sanitizeText(header);
+    document.getElementById('tagCloud').innerHTML = sanitizeText(tags);
+    document.getElementById('fortuneCard').innerHTML = sanitizeText(content);
 
     // Build action buttons (small, centered)
     let buttonsHTML = '';
@@ -295,6 +307,9 @@ window.App = (function() {
     document.getElementById('resultPage').classList.remove('active');
     document.getElementById('main-content').classList.add('visible');
     currentTool = null;
+    // Clean up surprise context so normal portrait entry doesn't auto-trigger surprise
+    delete window._portraitSurpriseZodiac;
+    delete window._portraitSurpriseContext;
   }
 
   function retryCurrentTool() {

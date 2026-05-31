@@ -359,14 +359,14 @@ body::before {
 
 /* Zodiac Grid */
 .zodiac-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-  max-width: 440px; width: 100%; padding: 0 8px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  max-width: 520px; width: 100%; padding: 0 12px;
 }
-@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 480px; } }
 .zodiac-card {
   background: var(--card-bg); backdrop-filter: blur(15px);
   border: 1px solid rgba(155,123,184,0.2);
-  border-radius: 14px; padding: 10px 4px;
+  border-radius: 14px; padding: 14px 6px;
   text-align: center; cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
@@ -385,10 +385,10 @@ body::before {
   transform: translateY(-3px) scale(1.03);
 }
 .zodiac-card.selected::after { opacity: 1; background: radial-gradient(ellipse at center, rgba(212,165,116,0.15) 0%, transparent 70%); }
-.zodiac-emoji { font-size: 1.5rem; display: block; margin-bottom: 3px; }
-.zodiac-name { font-size: 0.75rem; color: var(--text-dim); }
+.zodiac-emoji { font-size: 1.9rem; display: block; margin-bottom: 4px; }
+.zodiac-name { font-size: 0.82rem; color: var(--text-dim); }
 .zodiac-card.selected .zodiac-name { color: var(--warm-gold); }
-.zodiac-date { font-size: 0.62rem; color: rgba(107,82,120,0.5); margin-top: 1px; }
+.zodiac-date { font-size: 0.65rem; color: rgba(107,82,120,0.5); margin-top: 2px; }
 
 /* Mood Grid */
 .mood-grid {
@@ -772,14 +772,14 @@ body::before {
 
 /* ===== Element Image Selection — V3 SVG Art ===== */
 .element-img-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-  max-width: 400px; width: 100%; padding: 0 8px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  max-width: 340px; width: 100%; padding: 0 8px;
 }
-@media (max-width: 480px) { .element-img-grid { gap: 8px; max-width: 360px; } }
+@media (max-width: 480px) { .element-img-grid { gap: 6px; max-width: 300px; } }
 
 .element-img-card {
   display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  padding: 6px 5px;
+  padding: 4px 4px;
   background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(250,245,255,0.55) 100%);
   backdrop-filter: blur(16px);
   border: 2px solid rgba(155,123,184,0.15);
@@ -788,7 +788,7 @@ body::before {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
   box-shadow: 0 2px 14px rgba(155,123,184,0.07);
-  aspect-ratio: 1;
+  aspect-ratio: 4/3;
 }
 .element-img-card .img-svg-wrap {
   width: 90%; flex: 1;

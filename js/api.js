@@ -113,11 +113,12 @@ window.API = (function() {
 
 CRITICAL RULES:
 - ABSOLUTELY NO people, figures, faces, or human silhouettes — pure nature and cosmos only
+- ABSOLUTELY NO text, letters, words, numbers, symbols, alphabets, or any writing visible anywhere in the image — pure visual artwork with zero text overlay
 - 9:16 VERTICAL COMPOSITION — tall vertical frame optimized for phone wallpaper. Constellation + stardust in UPPER THIRD, landscape below. Vertical flow, never horizontal. Firmly 9:16 portrait.
 - MAGICAL/ETHEREAL atmosphere — floating stardust motes, bioluminescent particles, soft glowing light throughout. Dreamlike, enchanted, living tarot card quality.
 - STYLE: cinematic astrophotography, wide-angle lens, photorealistic, ethereal lighting, hyperdetailed
 - Include: specific lighting (golden hour / starlight / moonlight / aurora), rich color palette, zodiac constellation subtly glowing in night sky
-- End EVERY prompt with: "9:16 vertical portrait, cinematic composition, ethereal dreamlike atmosphere, astrophotography, 4K, hyperdetailed — vertical phone wallpaper"
+- End EVERY prompt with: "9:16 vertical portrait, cinematic composition, ethereal dreamlike atmosphere, astrophotography, 4K, hyperdetailed — vertical phone wallpaper — no text no letters"
 
 Return ONLY valid JSON:
 {
@@ -125,7 +126,7 @@ Return ONLY valid JSON:
   "styleDesc": "3-5 word style summary",
   "vibe": "one vibe word"
 }`,
-      'You are a master cosmic landscape prompt engineer. Your prompts generate breathtaking 9:16 vertical mystical nature scenes — no people, pure cosmos + nature. Every prompt forces 9:16 vertical phone-wallpaper composition. Style: cinematic astrophotography, ethereal, magical, hyperdetailed. English only.'
+      'You are a master cosmic landscape prompt engineer. Your prompts generate breathtaking 9:16 vertical mystical nature scenes — no people, NO text/letters/words, pure cosmos + nature. Every prompt forces 9:16 vertical phone-wallpaper composition. Style: cinematic astrophotography, ethereal, magical, hyperdetailed. English only.'
     );
     const parsed = safeParse(result);
     // Force 9:16 into prompt — AI sometimes ignores the instruction
