@@ -860,6 +860,7 @@ Tools.tarot = (function() {
     const wrap = document.createElement('div');
     wrap.dataset.revealed = '0';
     wrap.dataset.index = index;
+    wrap.dataset.isReversed = card.isReversed ? '1' : '0';
     wrap.style.cssText = `
       width: 170px; height: 250px;
       position: relative; cursor: pointer;
@@ -904,6 +905,8 @@ Tools.tarot = (function() {
       overflow: hidden; background: #0a0510;
       box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
     `;
+    // For reversed cards: counter-rotate text so it stays readable when card is flipped
+    const revTextStyle = card.isReversed ? 'transform:rotate(180deg);' : '';
     front.innerHTML = `
       <!-- Inner decorative border -->
       <div style="position:absolute;inset:6px;border:1px solid rgba(212,165,116,0.18);border-radius:12px;pointer-events:none;z-index:5;"></div>
@@ -920,12 +923,12 @@ Tools.tarot = (function() {
       <!-- Bottom gradient for text readability -->
       <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);z-index:3;border-radius:0 0 14px 14px;"></div>
       <!-- Position label at bottom (above card name) -->
-      <div style="position:absolute;bottom:42px;left:0;right:0;text-align:center;font-size:0.48rem;color:rgba(212,165,116,0.85);letter-spacing:0.28em;text-transform:uppercase;z-index:4;font-family:Georgia,serif;">${position}</div>
+      <div style="position:absolute;bottom:42px;left:0;right:0;text-align:center;font-size:0.48rem;color:rgba(212,165,116,0.85);letter-spacing:0.28em;text-transform:uppercase;z-index:4;font-family:Georgia,serif;${revTextStyle}">${position}</div>
       <!-- Divider line -->
       <div style="position:absolute;bottom:38px;left:35%;right:35%;height:1px;background:linear-gradient(to right, transparent, rgba(212,165,116,0.4), transparent);z-index:4;"></div>
       <!-- Card name bottom -->
-      <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;z-index:4;">
-        <div style="font-size:0.74rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.06em;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${card.name}${card.isReversed ? ' ↕' : ''}</div>
+      <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;z-index:4;${revTextStyle}">
+        <div style="font-size:0.74rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.06em;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${card.name}${card.isReversed ? ' (Reversed)' : ''}</div>
         <div style="font-size:0.44rem;color:rgba(212,165,116,0.7);margin-top:3px;letter-spacing:0.08em;">${(card.isReversed ? (card.reversed||card.upright) : (card.upright||'')).split(',').slice(0,2).join(' · ')}</div>
       </div>
     `;
@@ -943,7 +946,10 @@ Tools.tarot = (function() {
   function revealCard(wrap, back, front) {
     wrap.dataset.revealed = '1';
     revealedCount++;
-    wrap.style.transform = 'translateY(-8px) scale(1.04)';
+    const isReversed = wrap.dataset.isReversed === '1';
+    // Reversed cards rotate 180° → SVG art and frame appear upside-down (authentic tarot)
+    // Text inside has counter-rotation in its inline style → stays readable
+    wrap.style.transform = isReversed ? 'translateY(-8px) scale(1.04) rotate(180deg)' : 'translateY(-8px) scale(1.04)';
 
     back.style.transition = 'all 0.4s ease';
     back.style.opacity = '0';
@@ -1206,7 +1212,7 @@ Tools.tarot = (function() {
     const header = `<span class="result-zodiac" style="font-size:3rem;">✧</span>
       <div class="result-title">Your Tarot Reading</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
-        ${drawnCards.map((c, i) => `<span style="font-size:0.78rem;color:rgba(212,165,116,0.9);font-family:Georgia,serif;">${c.name}${c.isReversed ? ' ↕' : ''} <span style="opacity:0.6;font-size:0.7rem;">(${positions[i]})</span></span>`).join('<span style="color:rgba(212,165,116,0.3);">✦</span>')}
+        ${drawnCards.map((c, i) => `<span style="font-size:0.78rem;color:rgba(212,165,116,0.9);font-family:Georgia,serif;">${c.name}${c.isReversed ? ' (R)' : ''} <span style="opacity:0.6;font-size:0.7rem;">(${positions[i]})</span></span>`).join('<span style="color:rgba(212,165,116,0.3);">✦</span>')}
       </div>`;
 
     const tags = drawnCards.map(c => `<span class="tag">${c.name}</span>`).join('');
@@ -1214,7 +1220,7 @@ Tools.tarot = (function() {
     const content = `
       <div class="fortune-section">
         ${drawnCards.map((card, i) => `
-          <div class="fortune-label" style="color:#D4A574;">${card.name}${card.isReversed ? ' ↕ Reversed' : ''} <span style="opacity:0.6;font-size:0.72rem;font-family:Georgia,serif;">— ${positions[i]}</span></div>
+          <div class="fortune-label" style="color:#D4A574;">${card.name}${card.isReversed ? ' (Reversed)' : ''} <span style="opacity:0.6;font-size:0.72rem;font-family:Georgia,serif;">— ${positions[i]}</span></div>
           <div class="fortune-text" style="margin-bottom:6px;color:rgba(240,217,181,0.45);font-size:0.72rem;font-style:italic;">${card.isReversed ? (card.reversed || card.upright) : (card.upright || '')}</div>
           <div class="fortune-text" style="margin-bottom:18px;">${rich.cardReadings[i]}</div>
         `).join('<div style="border-bottom:1px solid rgba(212,165,116,0.12);margin:4px 0 16px;"></div>')}
