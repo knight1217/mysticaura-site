@@ -327,7 +327,9 @@ body::before {
   position: fixed; inset: 0; z-index: 50;
   background: linear-gradient(135deg, #FFF5F0 0%, #FBF0F5 25%, #F0E6FA 50%, #FFE4E8 75%, #FFF5F0 100%);
   flex-direction: column; align-items: center;
+  justify-content: flex-start;
   padding: 20px;
+  padding-bottom: 80px;
   overflow-y: auto;
 }
 .flow-page.active { display: flex; }
@@ -348,7 +350,7 @@ body::before {
 
 /* Flow title */
 .flow-title {
-  font-size: 2rem; margin: 60px 0 10px;
+  font-size: 2rem; margin: 40px 0 10px;
   background: linear-gradient(135deg, #D4A574, #E8B4B8, #9B7BB8);
   background-size: 200% 200%;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -359,14 +361,14 @@ body::before {
 
 /* Zodiac Grid */
 .zodiac-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
-  max-width: 520px; width: 100%; padding: 0 12px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  max-width: 640px; width: 100%; padding: 0 16px;
 }
-@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 480px; } }
+@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 500px; } }
 .zodiac-card {
   background: var(--card-bg); backdrop-filter: blur(15px);
   border: 1px solid rgba(155,123,184,0.2);
-  border-radius: 14px; padding: 14px 6px;
+  border-radius: 16px; padding: 18px 8px;
   text-align: center; cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
@@ -385,24 +387,24 @@ body::before {
   transform: translateY(-3px) scale(1.03);
 }
 .zodiac-card.selected::after { opacity: 1; background: radial-gradient(ellipse at center, rgba(212,165,116,0.15) 0%, transparent 70%); }
-.zodiac-emoji { font-size: 1.9rem; display: block; margin-bottom: 4px; }
-.zodiac-name { font-size: 0.82rem; color: var(--text-dim); }
+.zodiac-emoji { font-size: 2.4rem; display: block; margin-bottom: 6px; }
+.zodiac-name { font-size: 0.88rem; color: var(--text-dim); }
 .zodiac-card.selected .zodiac-name { color: var(--warm-gold); }
-.zodiac-date { font-size: 0.65rem; color: rgba(107,82,120,0.5); margin-top: 2px; }
+.zodiac-date { font-size: 0.68rem; color: rgba(107,82,120,0.5); margin-top: 3px; }
 
 /* Mood Grid */
 .mood-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  gap: 14px;
   max-width: 940px;
   width: 100%;
-  padding: 0 10px;
+  padding: 0 16px;
 }
 @media (max-width: 800px) {
   .mood-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    gap: 16px;
     max-width: 560px;
   }
 }
@@ -442,16 +444,16 @@ body::before {
   opacity: 1;
   background: radial-gradient(ellipse at center, rgba(212,165,116,0.12) 0%, transparent 70%);
 }
-.mood-emoji { font-size: 1.9rem; display: block; margin-bottom: 5px; transition: transform 0.3s; }
+.mood-emoji { font-size: 2.2rem; display: block; margin-bottom: 5px; transition: transform 0.3s; }
 .mood-card:hover .mood-emoji { transform: scale(1.12); }
-.mood-name { font-size: 0.82rem; color: var(--text-main); margin-bottom: 3px; font-weight: 600; }
-.mood-desc { font-size: 0.65rem; color: var(--text-dim); line-height: 1.4; }
+.mood-name { font-size: 0.88rem; color: var(--text-main); margin-bottom: 3px; font-weight: 600; }
+.mood-desc { font-size: 0.68rem; color: var(--text-dim); line-height: 1.4; }
 .mood-card.selected .mood-name { color: var(--warm-gold); }
 .mood-card.selected .mood-desc { color: var(--warm-gold); opacity: 0.75; }
 
 /* Proceed Btn */
 .proceed-btn {
-  margin-top: 44px;
+  margin-top: 48px;
   background: linear-gradient(135deg, rgba(155,123,184,0.5), rgba(212,165,116,0.5));
   border: 1px solid rgba(155,123,184,0.35);
   color: var(--text-main); padding: 14px 48px; border-radius: 40px;
@@ -518,7 +520,7 @@ body::before {
   display: none; position: fixed; inset: 0; z-index: 50;
   background: linear-gradient(135deg, #FFF5F0 0%, #FBF0F5 25%, #F0E6FA 50%, #FFE4E8 75%, #FFF5F0 100%);
   flex-direction: column; align-items: center;
-  padding: 20px; overflow-y: auto; overflow-x: hidden;
+  padding: 20px; padding-bottom: 100px; overflow-y: auto; overflow-x: hidden;
 }
 .result-page.active { display: flex; }
 .result-header {
@@ -772,14 +774,14 @@ body::before {
 
 /* ===== Element Image Selection — V3 SVG Art ===== */
 .element-img-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-  max-width: 340px; width: 100%; padding: 0 8px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  max-width: 480px; width: 100%; padding: 0 12px;
 }
-@media (max-width: 480px) { .element-img-grid { gap: 6px; max-width: 300px; } }
+@media (max-width: 480px) { .element-img-grid { gap: 8px; max-width: 380px; } }
 
 .element-img-card {
   display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  padding: 4px 4px;
+  padding: 6px 6px;
   background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(250,245,255,0.55) 100%);
   backdrop-filter: blur(16px);
   border: 2px solid rgba(155,123,184,0.15);
@@ -804,9 +806,9 @@ body::before {
 }
 .element-img-card:hover .img-svg-wrap { transform: scale(1.03) translateY(-1px); }
 .element-img-card .img-label {
-  font-size: 0.42rem; color: var(--text-dim);
+  font-size: 0.55rem; color: var(--text-dim);
   letter-spacing: 0.08em; text-transform: uppercase;
-  font-weight: 700; z-index: 1; margin-top: 1px;
+  font-weight: 700; z-index: 1; margin-top: 2px;
   flex-shrink: 0;
 }
 .element-img-card:hover {

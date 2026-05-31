@@ -861,7 +861,7 @@ Tools.tarot = (function() {
     wrap.dataset.revealed = '0';
     wrap.dataset.index = index;
     wrap.style.cssText = `
-      width: 150px; height: 220px;
+      width: 170px; height: 250px;
       position: relative; cursor: pointer;
       opacity: 0; transform: translateY(60px) scale(0.8);
       transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.4,0.64,1);
@@ -925,8 +925,8 @@ Tools.tarot = (function() {
       <div style="position:absolute;bottom:38px;left:35%;right:35%;height:1px;background:linear-gradient(to right, transparent, rgba(212,165,116,0.4), transparent);z-index:4;"></div>
       <!-- Card name bottom -->
       <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;z-index:4;">
-        <div style="font-size:0.74rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.06em;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${card.name}</div>
-        <div style="font-size:0.44rem;color:rgba(212,165,116,0.7);margin-top:3px;letter-spacing:0.08em;">${(card.upright||'').split(',').slice(0,2).join(' · ')}</div>
+        <div style="font-size:0.74rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.06em;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${card.name}${card.isReversed ? ' ↕' : ''}</div>
+        <div style="font-size:0.44rem;color:rgba(212,165,116,0.7);margin-top:3px;letter-spacing:0.08em;">${(card.isReversed ? (card.reversed||card.upright) : (card.upright||'')).split(',').slice(0,2).join(' · ')}</div>
       </div>
     `;
     wrap.appendChild(front);
@@ -1113,6 +1113,8 @@ Tools.tarot = (function() {
     const cardReadings = cards.map((card, i) => {
       const pos = positions[i];
       const traits = poeticTraits[card.name] || (card.upright || '').split(',').map(s => s.trim().toLowerCase());
+      const orientation = card.isReversed ? ' (Reversed)' : '';
+      const meaningText = card.isReversed ? (card.reversed || card.upright) : (card.upright || '');
       const t0 = traits[0] || 'mystery';
       const t1 = traits[1] || traits[0] || 'transformation';
       const t2 = traits[2] || traits[0] || 'light';
@@ -1158,6 +1160,10 @@ Tools.tarot = (function() {
 
     const shuffled = [...(D.tarotDeck || [])].sort(() => Math.random() - 0.5);
     drawnCards = shuffled.slice(0, 3);
+    // Random reversed: ~50% chance each card is reversed (UPRIGHT vs REVERSED)
+    drawnCards.forEach(card => {
+      card.isReversed = Math.random() > 0.5;
+    });
     const positions = ['Past', 'Present', 'Future'];
 
     fanShuffleAnimation(spread, function() {
@@ -1200,7 +1206,7 @@ Tools.tarot = (function() {
     const header = `<span class="result-zodiac" style="font-size:3rem;">✧</span>
       <div class="result-title">Your Tarot Reading</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
-        ${drawnCards.map((c, i) => `<span style="font-size:0.78rem;color:rgba(212,165,116,0.9);font-family:Georgia,serif;">${c.name} <span style="opacity:0.6;font-size:0.7rem;">(${positions[i]})</span></span>`).join('<span style="color:rgba(212,165,116,0.3);">✦</span>')}
+        ${drawnCards.map((c, i) => `<span style="font-size:0.78rem;color:rgba(212,165,116,0.9);font-family:Georgia,serif;">${c.name}${c.isReversed ? ' ↕' : ''} <span style="opacity:0.6;font-size:0.7rem;">(${positions[i]})</span></span>`).join('<span style="color:rgba(212,165,116,0.3);">✦</span>')}
       </div>`;
 
     const tags = drawnCards.map(c => `<span class="tag">${c.name}</span>`).join('');
@@ -1208,8 +1214,8 @@ Tools.tarot = (function() {
     const content = `
       <div class="fortune-section">
         ${drawnCards.map((card, i) => `
-          <div class="fortune-label" style="color:#D4A574;">${card.name} <span style="opacity:0.6;font-size:0.72rem;font-family:Georgia,serif;">— ${positions[i]}</span></div>
-          <div class="fortune-text" style="margin-bottom:6px;color:rgba(240,217,181,0.45);font-size:0.72rem;font-style:italic;">${card.upright||''}</div>
+          <div class="fortune-label" style="color:#D4A574;">${card.name}${card.isReversed ? ' ↕ Reversed' : ''} <span style="opacity:0.6;font-size:0.72rem;font-family:Georgia,serif;">— ${positions[i]}</span></div>
+          <div class="fortune-text" style="margin-bottom:6px;color:rgba(240,217,181,0.45);font-size:0.72rem;font-style:italic;">${card.isReversed ? (card.reversed || card.upright) : (card.upright || '')}</div>
           <div class="fortune-text" style="margin-bottom:18px;">${rich.cardReadings[i]}</div>
         `).join('<div style="border-bottom:1px solid rgba(212,165,116,0.12);margin:4px 0 16px;"></div>')}
       </div>
