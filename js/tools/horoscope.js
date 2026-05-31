@@ -90,9 +90,10 @@ Tools.horoscope = (function() {
         <div class="fortune-text">${result.advice}</div>
       </div>`;
 
-    App.showResult(header, tags, content, null, { 
-      zodiac: selectedZodiac.name,
-      context: { from: 'daily horoscope', mood: selectedMood.name, detail: result.reading.substring(0, 120) }
+    App.showResult(header, tags, content, null, null, {
+      chainFrom: 'horoscope',
+      chainZodiac: selectedZodiac.name,
+      chainContext: { z1: selectedZodiac.name, mood: selectedMood.name, moodDesc: selectedMood.desc, from: 'daily horoscope', detail: result.reading.substring(0, 120) }
     });
   }
 

@@ -34,9 +34,10 @@ Tools.destiny = (function() {
 
     // Auto-compute zodiac from birthday
     const zodiacFromBday = window.birthdayToZodiac ? window.birthdayToZodiac(birthday) : null;
-    App.showResult(header, tags, content, null, { 
-      zodiac: zodiacFromBday,
-      context: { 
+    App.showResult(header, tags, content, null, null, {
+      chainFrom: 'destiny',
+      chainZodiac: zodiacFromBday,
+      chainContext: { 
         from: 'destiny reading', 
         name: name,
         birthday: birthday,

@@ -86,9 +86,10 @@ Tools.compatibility = (function() {
         </div>
       </div>` : ''}`;
 
-    App.showResult(header, tags, content, null, { 
-      zodiac: z1.name + ' + ' + z2.name,
-      context: { 
+    App.showResult(header, tags, content, null, null, {
+      chainFrom: 'compatibility',
+      chainZodiac: z1.name,
+      chainContext: { 
         from: 'compatibility reading', 
         match: z1.name + ' & ' + z2.name, 
         score: result.score, 

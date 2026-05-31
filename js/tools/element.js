@@ -567,9 +567,10 @@ Tools.element = (function() {
         <div class="fortune-label">✦ Element Reading</div>
         <div class="fortune-text">${result.reading}</div>
       </div>`;
-    App.showResult(header, tags, content, null, {
-      zodiac: null,
-      context: { from: 'element reading', element: result.element, detail: result.reading.substring(0, 100) }
+    App.showResult(header, tags, content, null, null, {
+      chainFrom: 'element',
+      chainZodiac: null,
+      chainContext: { from: 'element reading', element: result.element, detail: result.reading.substring(0, 100) }
     });
   }
 

@@ -1362,6 +1362,37 @@ input.date-input::-moz-placeholder {
   transform: scale(0.97);
 }
 
+/* ===== Persona Chain Card — purple variant ===== */
+.surprise-card.persona-card {
+  background: linear-gradient(135deg, rgba(55,25,80,0.85), rgba(35,15,60,0.92));
+  border-color: rgba(180,140,220,0.45);
+}
+.surprise-card.persona-card::before {
+  background: radial-gradient(ellipse at 30% 50%, rgba(155,123,184,0.2) 0%, transparent 70%);
+}
+@keyframes personaCardGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(155,123,184,0.15), 0 0 30px rgba(180,140,220,0.1); }
+  50% { box-shadow: 0 0 35px rgba(155,123,184,0.35), 0 0 70px rgba(180,140,220,0.25), 0 0 100px rgba(155,123,184,0.1); }
+}
+.surprise-card.persona-card {
+  animation: personaCardGlow 3s ease-in-out infinite;
+}
+.surprise-card.persona-card:hover {
+  border-color: rgba(180,140,220,0.7);
+  box-shadow: 0 8px 50px rgba(155,123,184,0.35), 0 0 80px rgba(180,140,220,0.3);
+}
+.surprise-card.persona-card .surprise-title {
+  background: linear-gradient(135deg, #C9A9E0, #E8B4B8, #B490CA);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.surprise-card.persona-card .surprise-desc {
+  color: rgba(180,160,200,0.6);
+}
+.surprise-card.persona-card .surprise-arrow {
+  color: #B490CA;
+}
+
 /* ===== Result page ensure scrolling ===== */
 #resultPage {
   overflow-y: auto;

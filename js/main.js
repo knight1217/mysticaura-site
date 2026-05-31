@@ -233,21 +233,31 @@ window.App = (function() {
 
   function showPortraitSurprise(zodiacSign, context) {
     // Store the pre-selected zodiac for portrait tool
-    // If coming from compatibility (couple context), use the first zodiac
     const ctx = context || {};
-    
-    // Auto-compute zodiac from birthday if no zodiac sign provided
     let zSign = ctx.z1 || zodiacSign;
     if (!zSign && ctx.birthday && window.birthdayToZodiac) {
       zSign = window.birthdayToZodiac(ctx.birthday);
     }
-    
-    window._portraitSurpriseZodiac = zSign;
-    // Store context for portrait.js to read — include _zodiac for Try Again fallback
     ctx._zodiac = zSign;
+    window._portraitSurpriseZodiac = zSign;
     window._portraitSurpriseContext = ctx;
-    // Open the portrait flow directly
     openTool('portrait');
+  }
+
+  /* ===== Chain System — cross-tool context sharing ===== */
+  window._chainContext = null;      // Original tool context, never overwritten
+  window._chainOrigin = null;       // 'horoscope'|'tarot'|'destiny'|'element'|'compatibility'
+  window._chainZodiac = null;       // Zodiac sign for portrait surprise
+  window._personaChainContext = null; // Set when entering persona via chain
+
+  function showPersonaChain() {
+    window._personaChainContext = window._chainContext;
+    window._personaChainOrigin = window._chainOrigin;
+    openTool('persona');
+  }
+
+  function showPortraitChain() {
+    showPortraitSurprise(window._chainZodiac, window._chainContext);
   }
 
   /* ===== Text Sanitizer — strip problematic Unicode from AI output ===== */
@@ -262,12 +272,12 @@ window.App = (function() {
   }
 
   /* ===== Result Page ===== */
-  function showResult(header, tags, content, extraActions, showSurprise) {
+  function showResult(header, tags, content, extraActions, showSurprise, chainOpts) {
     document.getElementById('resultHeader').innerHTML = sanitizeText(header);
     document.getElementById('tagCloud').innerHTML = sanitizeText(tags);
     document.getElementById('fortuneCard').innerHTML = sanitizeText(content);
 
-    // Build action buttons (small, centered)
+    // Build action buttons
     let buttonsHTML = '';
     if (extraActions) buttonsHTML += extraActions;
     buttonsHTML += `<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">`;
@@ -277,14 +287,59 @@ window.App = (function() {
     buttonsHTML += `<button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button></div>`;
     document.getElementById('resultActions').innerHTML = buttonsHTML;
 
-    // Surprise card goes into its own container (outside resultActions)
-    const surpriseContainer = document.getElementById('surpriseContainer');
-    if (showSurprise) {
-      // Store context on window for the onclick handler
+    // === Chain System: cross-tool context + dual cards ===
+    if (chainOpts) {
+      window._chainContext = chainOpts.chainContext || {};
+      window._chainOrigin = chainOpts.chainFrom;
+      window._chainZodiac = chainOpts.chainZodiac || null;
+    } else {
+      window._chainContext = null;
+      window._chainOrigin = null;
+      window._chainZodiac = null;
+    }
+
+    const personaCC = document.getElementById('personaChainContainer');
+    const surpriseCC = document.getElementById('surpriseContainer');
+
+    if (chainOpts) {
+      const from = chainOpts.chainFrom;
+
+      // Persona card — hide if we're already showing a persona result
+      if (from !== 'persona') {
+        personaCC.innerHTML = `<div class="surprise-card persona-card" onclick="App.showPersonaChain()" style="cursor:pointer;">
+          <span class="surprise-icon">✨</span>
+          <div class="surprise-text">
+            <div class="surprise-title">Create Your Persona Tags & Bio</div>
+            <div class="surprise-desc">Turn your cosmic reading into ready-to-share social vibes</div>
+          </div>
+          <span class="surprise-arrow">→</span>
+        </div>`;
+        personaCC.style.display = 'block';
+      } else {
+        personaCC.innerHTML = '';
+        personaCC.style.display = 'none';
+      }
+
+      // Portrait card — hide if we're already showing a portrait result
+      if (from !== 'portrait') {
+        surpriseCC.innerHTML = `<div class="surprise-card" onclick="App.showPortraitChain()" style="cursor:pointer;">
+          <span class="surprise-icon">🔮</span>
+          <div class="surprise-text">
+            <div class="surprise-title">Something magical is waiting...</div>
+            <div class="surprise-desc">The stars whisper of a hidden gift — are you ready to unwrap it?</div>
+          </div>
+          <span class="surprise-arrow">→</span>
+        </div>`;
+        surpriseCC.style.display = 'block';
+      } else {
+        surpriseCC.innerHTML = '';
+        surpriseCC.style.display = 'none';
+      }
+    } else if (showSurprise) {
+      // Backward compat: old-style surprise (portrait only)
       window.__surpriseCtx = showSurprise.context || {};
       window.__surpriseZodiac = showSurprise.zodiac || null;
-
-      const surpriseHTML = `<div class="surprise-card" onclick="App.showPortraitSurprise(window.__surpriseZodiac, window.__surpriseCtx)" style="cursor:pointer;">
+      surpriseCC.innerHTML = `<div class="surprise-card" onclick="App.showPortraitSurprise(window.__surpriseZodiac, window.__surpriseCtx)" style="cursor:pointer;">
         <span class="surprise-icon">🔮</span>
         <div class="surprise-text">
           <div class="surprise-title">Something magical is waiting...</div>
@@ -292,11 +347,11 @@ window.App = (function() {
         </div>
         <span class="surprise-arrow">→</span>
       </div>`;
-      surpriseContainer.innerHTML = surpriseHTML;
-      surpriseContainer.style.display = 'block';
+      surpriseCC.style.display = 'block';
+      personaCC.style.display = 'none';
     } else {
-      surpriseContainer.innerHTML = '';
-      surpriseContainer.style.display = 'none';
+      surpriseCC.innerHTML = ''; surpriseCC.style.display = 'none';
+      personaCC.innerHTML = ''; personaCC.style.display = 'none';
     }
 
     document.querySelectorAll('.flow-page').forEach(p => p.classList.remove('active'));
@@ -307,9 +362,15 @@ window.App = (function() {
     document.getElementById('resultPage').classList.remove('active');
     document.getElementById('main-content').classList.add('visible');
     currentTool = null;
-    // Clean up surprise context so normal portrait entry doesn't auto-trigger surprise
+    // Clean up surprise context
     delete window._portraitSurpriseZodiac;
     delete window._portraitSurpriseContext;
+    delete window._personaChainContext;
+    delete window._personaChainOrigin;
+    // Keep _chainContext alive during chain navigation, clear on close
+    window._chainContext = null;
+    window._chainOrigin = null;
+    window._chainZodiac = null;
   }
 
   function retryCurrentTool() {
@@ -334,6 +395,7 @@ window.App = (function() {
     showLoading, hideLoading,
     showResult, showError, closeResult, retryCurrentTool,
     showPortraitSurprise,
+    showPersonaChain, showPortraitChain,
     get currentTool() { return currentTool; }
   };
 })();

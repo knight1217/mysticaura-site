@@ -158,7 +158,13 @@ Tools.portrait = (function() {
       <button class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${shareUrl}','_blank')">📘 Share</button>
       <button class="share-btn" onclick="navigator.clipboard.writeText('${result.prompt.replace(/'/g,"\\'").replace(/\n/g,' ')}');alert('Prompt copied!')">📋 Copy Prompt</button>`;
 
-    App.showResult(header, tags, content, extraActions);
+    App.showResult(header, tags, content, extraActions, null,
+      window._chainOrigin ? {
+        chainFrom: 'portrait',
+        chainContext: window._chainContext,
+        chainZodiac: window._chainZodiac
+      } : null
+    );
   }
 
   function buildPlatformCards(prompt, tier) {
