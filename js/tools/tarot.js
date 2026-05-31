@@ -1234,7 +1234,7 @@ Tools.tarot = (function() {
         <div class="fortune-text">${result && result.advice ? result.advice : rich.advice}</div>
       </div>`;
 
-    App.showResult(header, tags, content);
+    App.showResult(header, tags, content, null, { tarotCards: drawnCards.map(c => c.name) });
   }
 
   return { init, startReading };
