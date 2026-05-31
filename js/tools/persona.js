@@ -2,12 +2,14 @@
 Tools.persona = (function() {
   function init() {
     document.getElementById('persona-input').value = '';
-    document.getElementById('persona-platform').value = 'instagram';
+    const trigger = document.querySelector('#persona-platform .custom-select-trigger');
+    if (trigger) { trigger.dataset.value = 'instagram'; trigger.textContent = 'Instagram Bio'; }
   }
 
   async function startReading() {
     const words = document.getElementById('persona-input').value.trim();
-    const platform = document.getElementById('persona-platform').value;
+    const trigger = document.querySelector('#persona-platform .custom-select-trigger');
+    const platform = trigger ? trigger.dataset.value : 'instagram';
     if (!words) { alert('Please describe yourself in 3 words'); return; }
 
     App.showLoading('Crafting your persona...');

@@ -156,12 +156,15 @@
   <div class="flow-subtitle">Describe yourself in 3 words</div>
   <div style="max-width:400px;width:100%;">
     <input type="text" id="persona-input" placeholder="e.g. dreamy, stubborn, creative" style="width:100%;padding:14px 18px;border-radius:30px;border:1px solid rgba(155,123,184,0.3);background:var(--card-bg);font-family:inherit;font-size:1rem;color:var(--text-main);margin-bottom:14px;outline:none;">
-    <select id="persona-platform" class="mystic-select">
-      <option value="instagram">Instagram Bio</option>
-      <option value="twitter">Twitter / X Bio</option>
-      <option value="tiktok">TikTok Bio</option>
-      <option value="dating">Dating Profile</option>
-    </select>
+    <div class="custom-select" id="persona-platform">
+      <div class="custom-select-trigger" data-value="instagram">Instagram Bio</div>
+      <div class="custom-select-options">
+        <div class="custom-select-option" data-value="instagram">Instagram Bio</div>
+        <div class="custom-select-option" data-value="twitter">Twitter / X Bio</div>
+        <div class="custom-select-option" data-value="tiktok">TikTok Bio</div>
+        <div class="custom-select-option" data-value="dating">Dating Profile</div>
+      </div>
+    </div>
   </div>
   <button class="proceed-btn" id="persona-proceed" onclick="Tools.persona.startReading()">Generate My Persona ✧</button>
 </div>

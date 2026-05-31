@@ -394,26 +394,22 @@ window.DatePicker = (function() {
   }
 
   function bindScrollListeners() {
-    // Remove old listeners by replacing nodes (cloneNode drops all listeners)
-    const scrollPositions = {};
-    ['drumMonth', 'drumDay', 'drumYear'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      scrollPositions[id] = el.scrollTop;
-      const clone = el.cloneNode(true);
-      el.parentNode.replaceChild(clone, el);
-    });
-    // Restore scroll positions immediately after replacement
-    ['drumMonth', 'drumDay', 'drumYear'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && scrollPositions[id] !== undefined) {
-        el.scrollTop = scrollPositions[id];
-      }
-    });
-
     const drumMonth = document.getElementById('drumMonth');
     const drumDay = document.getElementById('drumDay');
     const drumYear = document.getElementById('drumYear');
+
+    // Clean up old listeners using stored references
+    [drumMonth, drumDay, drumYear].forEach(el => {
+      if (!el) return;
+      if (el._wb_scrollHandler) {
+        el.removeEventListener('scroll', el._wb_scrollHandler);
+        el._wb_scrollHandler = null;
+      }
+      if (el._wb_mousedownHandler) {
+        el.removeEventListener('mousedown', el._wb_mousedownHandler);
+        el._wb_mousedownHandler = null;
+      }
+    });
 
     // Mouse drag scroll support
     function addDragScroll(el) {
@@ -439,8 +435,8 @@ window.DatePicker = (function() {
         el.scrollTo({ top: idx * 44, behavior: 'smooth' });
       };
 
-      el.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return; // only left-click
+      const onMouseDown = (e) => {
+        if (e.button !== 0) return;
         isDragging = true;
         startY = e.clientY;
         startScrollTop = el.scrollTop;
@@ -449,7 +445,10 @@ window.DatePicker = (function() {
         e.preventDefault();
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
-      });
+      };
+
+      el._wb_mousedownHandler = onMouseDown;
+      el.addEventListener('mousedown', onMouseDown);
     }
 
     addDragScroll(drumMonth);
@@ -458,7 +457,7 @@ window.DatePicker = (function() {
 
     function onScroll(el, onChange) {
       let timer;
-      el.addEventListener('scroll', function() {
+      const handler = function() {
         updateActiveItems(el);
         clearTimeout(timer);
         timer = setTimeout(() => {
@@ -466,7 +465,9 @@ window.DatePicker = (function() {
           el.scrollTo({ top: idx * 44, behavior: 'smooth' });
           onChange && onChange();
         }, 120);
-      });
+      };
+      el._wb_scrollHandler = handler;
+      el.addEventListener('scroll', handler);
     }
 
     onScroll(drumMonth, () => {
@@ -542,6 +543,47 @@ window.DatePicker = (function() {
   document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('destiny-birthday');
     if (input) input.addEventListener('click', open);
+
+    // Custom select dropdowns
+    document.querySelectorAll('.custom-select').forEach(select => {
+      const trigger = select.querySelector('.custom-select-trigger');
+      const options = select.querySelectorAll('.custom-select-option');
+      if (!trigger) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = select.classList.contains('open');
+        document.querySelectorAll('.custom-select.open').forEach(s => {
+          s.classList.remove('open');
+          const t = s.querySelector('.custom-select-trigger');
+          if (t) t.classList.remove('active');
+        });
+        if (!isOpen) {
+          select.classList.add('open');
+          trigger.classList.add('active');
+        }
+      });
+
+      options.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          trigger.dataset.value = opt.dataset.value;
+          trigger.textContent = opt.textContent;
+          options.forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          select.classList.remove('open');
+          trigger.classList.remove('active');
+        });
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.custom-select.open').forEach(s => {
+        s.classList.remove('open');
+        const t = s.querySelector('.custom-select-trigger');
+        if (t) t.classList.remove('active');
+      });
+    });
   });
 
   return { open, confirm, cancel };

@@ -730,29 +730,39 @@ Tools.tarot = (function() {
     `;
     wrap.appendChild(back);
 
-    // Card Front — full colour SVG
+    // Card Front — full colour SVG with mystic frame
     const front = document.createElement('div');
     front.style.cssText = `
       position: absolute; inset: 0;
-      border: 2px solid rgba(212,165,116,0.6); border-radius: 16px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: flex-start;
+      border: 2px solid rgba(212,165,116,0.55); border-radius: 16px;
       opacity: 0; pointer-events: none;
       transition: opacity 0.5s ease;
       overflow: hidden; background: #0a0510;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
     `;
     front.innerHTML = `
-      <div style="position:absolute;inset:7px;border:1px solid rgba(212,165,116,0.22);border-radius:11px;pointer-events:none;z-index:3;"></div>
+      <!-- Inner decorative border -->
+      <div style="position:absolute;inset:6px;border:1px solid rgba(212,165,116,0.18);border-radius:12px;pointer-events:none;z-index:5;"></div>
+      <div style="position:absolute;inset:10px;border:1px dashed rgba(212,165,116,0.1);border-radius:9px;pointer-events:none;z-index:5;"></div>
+      <!-- Corner ornaments -->
+      <svg style="position:absolute;top:8px;left:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M0 4 L0 0 L4 0" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="2" cy="2" r="1" fill="#D4A574"/></svg>
+      <svg style="position:absolute;top:8px;right:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M10 0 L14 0 L14 4" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="12" cy="2" r="1" fill="#D4A574"/></svg>
+      <svg style="position:absolute;bottom:8px;left:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M0 10 L0 14 L4 14" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="2" cy="12" r="1" fill="#D4A574"/></svg>
+      <svg style="position:absolute;bottom:8px;right:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M10 14 L14 14 L14 10" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="12" cy="12" r="1" fill="#D4A574"/></svg>
       <!-- SVG fills card fully -->
       <div style="position:absolute;inset:0;z-index:1;">${art.svg.replace('viewBox="0 0 100 140"', 'viewBox="0 0 100 140" style="width:100%;height:100%;"')}</div>
-      <!-- Overlay gradient at bottom for text readability -->
-      <div style="position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%);z-index:2;border-radius:0 0 14px 14px;"></div>
-      <!-- Position label top -->
-      <div style="position:absolute;top:11px;left:0;right:0;text-align:center;font-size:0.5rem;color:#D4A574;letter-spacing:0.22em;text-transform:uppercase;z-index:4;">${position}</div>
+      <!-- Vignette overlay for mystery -->
+      <div style="position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center, transparent 50%, rgba(10,5,16,0.5) 100%);"></div>
+      <!-- Bottom gradient for text readability -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);z-index:3;border-radius:0 0 14px 14px;"></div>
+      <!-- Position label at bottom (above card name) -->
+      <div style="position:absolute;bottom:42px;left:0;right:0;text-align:center;font-size:0.48rem;color:rgba(212,165,116,0.85);letter-spacing:0.28em;text-transform:uppercase;z-index:4;font-family:Georgia,serif;">${position}</div>
+      <!-- Divider line -->
+      <div style="position:absolute;bottom:38px;left:35%;right:35%;height:1px;background:linear-gradient(to right, transparent, rgba(212,165,116,0.4), transparent);z-index:4;"></div>
       <!-- Card name bottom -->
       <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;z-index:4;">
-        <div style="font-size:0.72rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.04em;">${card.name}</div>
-        <div style="font-size:0.45rem;color:rgba(212,165,116,0.75);margin-top:2px;">${(card.upright||'').split(',').slice(0,2).join(' · ')}</div>
+        <div style="font-size:0.74rem;color:#F0D9B5;font-weight:700;font-family:Georgia,serif;letter-spacing:0.06em;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${card.name}</div>
+        <div style="font-size:0.44rem;color:rgba(212,165,116,0.7);margin-top:3px;letter-spacing:0.08em;">${(card.upright||'').split(',').slice(0,2).join(' · ')}</div>
       </div>
     `;
     wrap.appendChild(front);
@@ -948,10 +958,19 @@ Tools.tarot = (function() {
         }, i * 200);
       });
 
-      const instruction = document.createElement('div');
-      instruction.style.cssText = 'width:100%;text-align:center;color:rgba(212,165,116,0.8);font-family:Georgia,serif;font-size:0.9rem;letter-spacing:0.06em;margin-top:16px;';
+      // Instruction below the cards (outside flex container)
+      let instruction = document.getElementById('tarot-instruction');
+      if (!instruction) {
+        instruction = document.createElement('div');
+        instruction.id = 'tarot-instruction';
+        spread.parentNode.insertBefore(instruction, spread.nextSibling);
+      }
+      instruction.style.cssText = 'text-align:center;color:rgba(212,165,116,0.85);font-family:Georgia,serif;font-size:0.92rem;letter-spacing:0.08em;margin-top:20px;opacity:0;transform:translateY(10px);transition:opacity 0.6s ease,transform 0.6s ease;';
       instruction.textContent = 'Tap each card to reveal your destiny...';
-      spread.appendChild(instruction);
+      setTimeout(() => {
+        instruction.style.opacity = '1';
+        instruction.style.transform = 'translateY(0)';
+      }, 800);
     });
   }
 
