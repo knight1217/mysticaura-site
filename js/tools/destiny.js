@@ -32,11 +32,14 @@ Tools.destiny = (function() {
         <div class="detail-item"><div class="detail-icon">🎂</div><div class="detail-label">Birthday</div><div class="detail-value">${birthday}</div></div>
       </div>`;
 
+    // Auto-compute zodiac from birthday
+    const zodiacFromBday = window.birthdayToZodiac ? window.birthdayToZodiac(birthday) : null;
     App.showResult(header, tags, content, null, { 
-      zodiac: null,
+      zodiac: zodiacFromBday,
       context: { 
         from: 'destiny reading', 
-        name: name, 
+        name: name,
+        birthday: birthday,
         keywords: (result.keywords || ['mystery','light','shadow']).join(', '),
         detail: result.reading ? result.reading.substring(0, 100) : ''
       }

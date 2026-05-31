@@ -235,7 +235,14 @@ window.App = (function() {
     // Store the pre-selected zodiac for portrait tool
     // If coming from compatibility (couple context), use the first zodiac
     const ctx = context || {};
-    window._portraitSurpriseZodiac = ctx.z1 || zodiacSign;
+    
+    // Auto-compute zodiac from birthday if no zodiac sign provided
+    let zSign = ctx.z1 || zodiacSign;
+    if (!zSign && ctx.birthday && window.birthdayToZodiac) {
+      zSign = window.birthdayToZodiac(ctx.birthday);
+    }
+    
+    window._portraitSurpriseZodiac = zSign;
     // Store context for portrait.js to read
     window._portraitSurpriseContext = ctx;
     // Open the portrait flow directly
@@ -315,6 +322,37 @@ window.App = (function() {
     get currentTool() { return currentTool; }
   };
 })();
+
+/* ===== Birthday → Zodiac Converter ===== */
+window.birthdayToZodiac = function(birthdayString) {
+  if (!birthdayString || typeof birthdayString !== 'string') return null;
+  const parts = birthdayString.split('/');
+  if (parts.length !== 3) return null;
+  const m = parseInt(parts[0], 10);
+  const d = parseInt(parts[1], 10);
+  if (isNaN(m) || isNaN(d) || m < 1 || m > 12 || d < 1 || d > 31) return null;
+
+  // Zodiac sign boundaries (month, day) — end of each sign's range
+  const signs = [
+    { name: 'Capricorn', m: 1, d: 19 },
+    { name: 'Aquarius',  m: 2, d: 18 },
+    { name: 'Pisces',    m: 3, d: 20 },
+    { name: 'Aries',     m: 4, d: 19 },
+    { name: 'Taurus',    m: 5, d: 20 },
+    { name: 'Gemini',    m: 6, d: 21 },
+    { name: 'Cancer',    m: 7, d: 22 },
+    { name: 'Leo',       m: 8, d: 22 },
+    { name: 'Virgo',     m: 9, d: 22 },
+    { name: 'Libra',     m: 10, d: 23 },
+    { name: 'Scorpio',   m: 11, d: 21 },
+    { name: 'Sagittarius', m: 12, d: 21 }
+  ];
+
+  for (const sign of signs) {
+    if (m < sign.m || (m === sign.m && d <= sign.d)) return sign.name;
+  }
+  return 'Capricorn'; // Dec 22-31
+};
 
 /* ===== DATE PICKER — Year/Month/Day Drum Rollers ===== */
 window.DatePicker = (function() {

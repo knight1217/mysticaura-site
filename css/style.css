@@ -359,14 +359,14 @@ body::before {
 
 /* Zodiac Grid */
 .zodiac-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-  max-width: 600px; width: 100%; padding: 0 10px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  max-width: 440px; width: 100%; padding: 0 8px;
 }
-@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
+@media (max-width: 550px) { .zodiac-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
 .zodiac-card {
   background: var(--card-bg); backdrop-filter: blur(15px);
   border: 1px solid rgba(155,123,184,0.2);
-  border-radius: 16px; padding: 16px 6px;
+  border-radius: 14px; padding: 10px 4px;
   text-align: center; cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative; overflow: hidden;
@@ -385,10 +385,10 @@ body::before {
   transform: translateY(-3px) scale(1.03);
 }
 .zodiac-card.selected::after { opacity: 1; background: radial-gradient(ellipse at center, rgba(212,165,116,0.15) 0%, transparent 70%); }
-.zodiac-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
-.zodiac-name { font-size: 0.85rem; color: var(--text-dim); }
+.zodiac-emoji { font-size: 1.5rem; display: block; margin-bottom: 3px; }
+.zodiac-name { font-size: 0.75rem; color: var(--text-dim); }
 .zodiac-card.selected .zodiac-name { color: var(--warm-gold); }
-.zodiac-date { font-size: 0.7rem; color: rgba(107,82,120,0.5); margin-top: 2px; }
+.zodiac-date { font-size: 0.62rem; color: rgba(107,82,120,0.5); margin-top: 1px; }
 
 /* Mood Grid */
 .mood-grid {
@@ -1299,25 +1299,33 @@ input.date-input::-moz-placeholder {
   margin-top: 40px;
 }
 
-/* ===== Portrait Flow Page — Ensure Scrolling ===== */
+/* ===== Portrait Flow Page — Compact ===== */
 #flow-portrait {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 40px;
 }
+#flow-portrait .flow-title { margin-top: 40px; }
+#flow-portrait .flow-subtitle { margin-bottom: 16px; }
 #flow-portrait .prompt-card {
   max-height: none;
   overflow: visible;
 }
+#flow-portrait > * {
+  flex-shrink: 0;
+}
 
-/* ===== Portrait Result Page Scroll Fix ===== */
+/* ===== Portrait Zodiac Picker — Compact ===== */
+#portrait-zodiac-picker {
+  max-width: 440px !important;
+  margin-bottom: 14px !important;
+}
+
+/* ===== Portrait Result Page Scroll Fix (duplicate override — keep strongest) ===== */
 #flow-portrait {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-}
-#flow-portrait > * {
-  flex-shrink: 0;
 }
 
 /* ===== Platform Card Simplify ===== */

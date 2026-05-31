@@ -801,16 +801,16 @@ Tools.tarot = (function() {
     }, 320);
   }
 
-  /* ===== BIG Fan Shuffle Animation ===== */
+  /* ===== GRAND Shuffle Animation — Explode → Orbit → Stack → Draw ===== */
   function fanShuffleAnimation(container, callback) {
     const cx = window.innerWidth / 2;
-    const cy = window.innerHeight * 0.45;
+    const cy = window.innerHeight * 0.43;
+    const COUNT = 11;
+    const W = 90, H = 130;
 
     const deck = [];
-    const COUNT = 9;
-    const W = 110, H = 165;
 
-    // Create deck cards
+    // Create cards
     for (let i = 0; i < COUNT; i++) {
       const el = document.createElement('div');
       el.style.cssText = `
@@ -818,12 +818,11 @@ Tools.tarot = (function() {
         left: ${cx}px; top: ${cy}px;
         width: ${W}px; height: ${H}px;
         background: linear-gradient(170deg, #2D1B4E 0%, #1a0e3d 40%, #180c36 100%);
-        border: 2px solid rgba(212,165,116,0.5);
+        border: 2px solid rgba(212,165,116,0.45);
         border-radius: 13px; z-index: 500;
         pointer-events: none;
-        transform: translate(-50%,-50%) rotate(0deg);
-        transform-origin: 50% 75%;
-        transition: transform 0.65s cubic-bezier(0.34,1.2,0.64,1);
+        transform: translate(-50%,-50%) scale(1) rotate(0deg);
+        transition: transform 0.5s cubic-bezier(0.34,1.3,0.64,1), opacity 0.5s ease;
         box-shadow: 0 8px 30px rgba(0,0,0,0.7);
         display: flex; align-items: center; justify-content: center;
       `;
@@ -835,95 +834,143 @@ Tools.tarot = (function() {
       deck.push(el);
     }
 
-    // Phase 1: Big fan out (dramatic spread)
+    // Phase 1: EXPLODE outward — starburst in all directions
     setTimeout(() => {
       deck.forEach((el, i) => {
-        const angle = -60 + (120 / (COUNT - 1)) * i;
-        const spread = 20 + Math.abs(i - (COUNT-1)/2) * 8;
-        el.style.transition = `transform 0.7s cubic-bezier(0.34,1.3,0.64,1)`;
-        el.style.transform = `translate(-50%, calc(-50% - ${spread}px)) rotate(${angle}deg)`;
+        const angle = (2 * Math.PI / COUNT) * i;
+        const dist = 160 + (i % 3) * 40;
+        const offsetX = Math.cos(angle) * dist;
+        const offsetY = Math.sin(angle) * dist - 40;
+        const rot = (Math.random() - 0.5) * 140;
+        el.style.transition = 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)';
+        el.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${rot}deg) scale(0.8)`;
       });
-    }, 50);
+    }, 100);
 
-    // Phase 2: Riffle shuffle — split into two halves, interleave dramatically
+    // Phase 2: ORBIT — cards circle around center
+    setTimeout(() => {
+      const orbitR = 200;
+      deck.forEach((el, i) => {
+        const angle = (2 * Math.PI / COUNT) * i + (performance.now() * 0.0002);
+        const ox = Math.cos(angle) * orbitR;
+        const oy = Math.sin(angle) * orbitR * 0.55;
+        const rot = (Math.random() - 0.5) * 80;
+        el.style.transition = 'transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+        el.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(${rot}deg) scale(0.85)`;
+      });
+    }, 800);
+
+    // Phase 3: Second orbit — spin further, different angles
+    setTimeout(() => {
+      const orbitR2 = 180;
+      deck.forEach((el, i) => {
+        const angle = (2 * Math.PI / COUNT) * i + Math.PI / 3;
+        const ox = Math.cos(angle) * orbitR2;
+        const oy = Math.sin(angle) * orbitR2 * 0.5;
+        el.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+        el.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(${(Math.random()-0.5)*60}deg) scale(0.9)`;
+      });
+    }, 1600);
+
+    // Phase 4: COLLAPSE — cards rush back to center, stack diagonally
     setTimeout(() => {
       deck.forEach((el, i) => {
-        const goLeft = i < Math.ceil(COUNT / 2);
-        const offset = goLeft ? -55 : 55;
-        const tilt = goLeft ? -18 : 18;
-        el.style.transition = 'transform 0.3s ease-in';
-        el.style.transform = `translate(calc(-50% + ${offset}px), -50%) rotate(${tilt}deg)`;
+        const stagger = i * 3;
+        const ox = (i - (COUNT-1)/2) * 0.8;
+        const oy = (i - (COUNT-1)/2) * 0.4;
+        el.style.transition = 'transform 0.35s ease-in';
+        el.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(0deg) scale(1)`;
       });
-    }, 850);
+    }, 2300);
 
-    // Phase 3: Come together fast (riffle completion)
+    // Phase 5: Tighten stack + breathe
     setTimeout(() => {
       deck.forEach((el, i) => {
-        const stagger = i * 45;
-        setTimeout(() => {
-          el.style.transition = 'transform 0.22s ease-out';
-          el.style.transform = `translate(-50%, -50%) rotate(${(Math.random()-0.5)*12}deg)`;
-        }, stagger);
+        const ox = (i - (COUNT-1)/2) * 0.3;
+        const oy = (i - (COUNT-1)/2) * 0.15;
+        el.style.transition = 'transform 0.3s ease-out';
+        el.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(0deg) scale(1)`;
       });
-    }, 1200);
+    }, 2750);
 
-    // Phase 4: Second fan out (show off the deck)
+    // Phase 6: Fade and reveal — cards dissolve, 3 cards appear on page
     setTimeout(() => {
       deck.forEach((el, i) => {
-        const angle = -50 + (100 / (COUNT - 1)) * i;
-        el.style.transition = 'transform 0.5s cubic-bezier(0.34,1.2,0.64,1)';
-        el.style.transform = `translate(-50%, calc(-50% - 15px)) rotate(${angle}deg)`;
-      });
-    }, 1700);
-
-    // Phase 5: Collapse to single deck
-    setTimeout(() => {
-      deck.forEach((el) => {
-        el.style.transition = 'transform 0.4s ease-in-out';
-        el.style.transform = `translate(-50%, -50%) rotate(0deg)`;
-      });
-    }, 2400);
-
-    // Phase 6: Fly UPWARD off screen (dramatic)
-    setTimeout(() => {
-      deck.forEach((el, i) => {
-        const xSpread = (Math.random() - 0.5) * 200;
-        el.style.transition = `transform 0.55s ease-in, opacity 0.4s ease`;
-        el.style.transform = `translate(calc(-50% + ${xSpread}px), calc(-50% - ${window.innerHeight * 0.8}px)) rotate(${(Math.random()-0.5)*60}deg) scale(0.5)`;
+        el.style.transition = 'transform 0.5s ease-in, opacity 0.4s ease';
+        el.style.transform = `translate(-50%, -50%) rotate(0deg) scale(1.08)`;
         el.style.opacity = '0';
       });
-    }, 3000);
+    }, 3150);
 
-    // Phase 7: Cleanup and callback
+    // Cleanup + callback
     setTimeout(() => {
       deck.forEach(el => el.remove());
       callback();
     }, 3600);
   }
 
-  /* ===== Rich Reading Generator ===== */
+  /* ===== Rich Reading Generator — Poetic + Mystical ===== */
   function generateRichReading(cards) {
     const positions = ['Past', 'Present', 'Future'];
+    // Poetic position descriptors
+    const posNames = {
+      'Past': 'The Echo Behind You',
+      'Present': 'The Mirror Before You',
+      'Future': 'The Horizon Ahead'
+    };
+    
+    // Extended poetic keyword library for each card
+    const poeticTraits = {
+      'The Fool': ['boundless wonder','innocent courage','the leap of faith'],
+      'The Magician': ['focused will','raw creation','divine channeling'],
+      'The High Priestess': ['veiled wisdom','silent knowing','the inner oracle'],
+      'The Empress': ['abundant nurture','sacred bloom','the garden of soul'],
+      'The Emperor': ['steadfast order','carved foundation','the mountain king'],
+      'The Lovers': ['sacred union','mirror souls','the choice of heart'],
+      'The Chariot': ['triumphant surge','harnessed will','the conquering flame'],
+      'Strength': ['gentle courage','inner flame','the quiet lion'],
+      'The Hermit': ['lantern light','solitary depth','the star-lit path'],
+      'Wheel of Fortune': ['cosmic rhythm','turning tides','destiny\'s spin'],
+      'Justice': ['balanced blade','clear truth','the scales of dawn'],
+      'The Hanged Man': ['sacred pause','inverted vision','the suspended bloom'],
+      'Death': ['phoenix rising','deep transformation','the eternal cycle'],
+      'Temperance': ['sacred blending','patient alchemy','the golden mean'],
+      'The Devil': ['shadow embrace','raw hunger','the honest prison'],
+      'The Tower': ['thunder revelation','sudden clarity','the lightning path'],
+      'The Star': ['soul-light','blessed renewal','the eternal spark'],
+      'The Moon': ['lunar whisper','dream-lit path','the veiled tides'],
+      'The Sun': ['radiant joy','golden awakening','the heart\'s noon'],
+      'Judgement': ['sacred calling','soul reckoning','the great rising'],
+      'The World': ['cosmic completion','spiral home','the infinite dance']
+    };
+
+    // Beautiful prose per position
     const cardReadings = cards.map((card, i) => {
       const pos = positions[i];
-      const keywords = (card.upright || '').split(',').map(s => s.trim());
+      const traits = poeticTraits[card.name] || (card.upright || '').split(',').map(s => s.trim().toLowerCase());
+      const t0 = traits[0] || 'mystery';
+      const t1 = traits[1] || traits[0] || 'transformation';
+      const t2 = traits[2] || traits[0] || 'light';
+
       let reading = '';
       if (pos === 'Past') {
-        reading = `In your past, <strong>${card.name}</strong> reveals a chapter shaped by ${keywords[0] ? keywords[0].toLowerCase() : 'transformation'}${keywords[1] ? ' and ' + keywords[1].toLowerCase() : ''}. This energy has been a quiet architect of who you are today.`;
+        reading = `<em>${posNames[pos]}</em> — The cards whisper of a chapter already written, where the essence of <strong>${card.name}</strong> danced through your life. It carried the gift of <em>${t0}</em> and the quiet lesson of <em>${t1}</em>. Like morning mist dissolving into sunlight, this energy has shaped the riverbed through which your present now flows.`;
       } else if (pos === 'Present') {
-        reading = `Right now, <strong>${card.name}</strong> stands as your current mirror — reflecting ${keywords[0] ? keywords[0].toLowerCase() : 'change'}${keywords[1] ? ' and ' + keywords[1].toLowerCase() : ''} at work in your life.`;
+        reading = `<em>${posNames[pos]}</em> — <strong>${card.name}</strong> stands at the very center of your now, a luminous reflection of <em>${t0}</em>. It holds up a mirror polished by the stars themselves, asking you to see the <em>${t1}</em> already blooming within. This is not a distant promise — it is the air you are breathing right now.`;
       } else {
-        reading = `Looking ahead, <strong>${card.name}</strong> illuminates a path of ${keywords[0] ? keywords[0].toLowerCase() : 'growth'}${keywords[1] ? ' and ' + keywords[1].toLowerCase() : ''}. This energy is moving toward you.`;
+        reading = `<em>${posNames[pos]}</em> — Ahead, where the veil thins between what is and what shall be, <strong>${card.name}</strong> rises like a distant star guiding sailors home. It carries the fragrance of <em>${t0}</em> and the gentle pull of <em>${t1}</em>. The universe is weaving this into your story even as you read these words.`;
       }
       return reading;
     });
 
-    const kw = cards.map(c => ((c.upright || '').split(',')[0] || 'change').trim().toLowerCase());
-    const synthesis = `Together, these three cards weave a story: <strong>${kw[0]}</strong> flowing into <strong>${kw[1]}</strong>, moving toward <strong>${kw[2]}</strong>. The universe is guiding a meaningful transformation.`;
+    // Synthesis — weave all three together poetically
+    const n0 = cards[0].name, n1 = cards[1].name, n2 = cards[2].name;
+    const synthesis = `In the great tapestry, three luminous threads intertwine: <strong>${n0}</strong> was the seed planted in fertile darkness — <strong>${n1}</strong> is the blossom opening to morning light — and <strong>${n2}</strong> is the fruit ripening on a branch you cannot yet reach. Together they sing a single chord, a harmony composed by the cosmos just for you.`;
+
     const adviceOptions = [
-      `The cards encourage you to honor where you've been while staying open to where you're going.`,
-      `Your reading suggests a moment of powerful alignment. Trust the energy of <strong>${kw[1]}</strong>.`,
-      `The energy around you is shifting. Let <strong>${kw[1]}</strong> be your guiding principle.`
+      `Let the wisdom of <strong>${n1}</strong> be your compass this season. Its energy is not merely a symbol — it is a living current pulsing through your days. Listen to what it whispers in the quiet moments between thoughts.`,
+      `The cards do not command; they illuminate. The path revealed through <strong>${n0}</strong>, <strong>${n1}</strong>, and <strong>${n2}</strong> is one of profound alignment. Trust the unfolding — you are exactly where the universe intends you to be.`,
+      `There is a sacred rhythm to all things. <strong>${n1}</strong> beats at the heart of your reading, a reminder that you are both the dreamer and the dream. Carry this knowing like a lantern into the days ahead.`
     ];
     return { cardReadings, synthesis, advice: adviceOptions[Math.floor(Math.random() * adviceOptions.length)] };
   }
