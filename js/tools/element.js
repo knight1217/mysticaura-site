@@ -555,22 +555,23 @@ Tools.element = (function() {
     App.showLoading('Reading your elemental aura...');
     let result;
     try { result = await API.getElement(chosen); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
     const elEmojis = { Fire:'🔥', Water:'💧', Earth:'🌍', Air:'💨' };
-    const header = `<span class="result-zodiac">${result.emoji || elEmojis[result.element] || '⚡'}</span>
-      <div class="result-title">Your Element: ${result.element}</div>`;
+    const element = result.element || 'Unknown';
+    const header = `<span class="result-zodiac">${result.emoji || elEmojis[element] || '⚡'}</span>
+      <div class="result-title">Your Element: ${element}</div>`;
     const tags = (result.traits || []).map(t => `<span class="tag">${t}</span>`).join('');
     const content = `
       <div class="fortune-section">
         <div class="fortune-label">✦ Element Reading</div>
-        <div class="fortune-text">${result.reading}</div>
+        <div class="fortune-text">${result.reading || ''}</div>
       </div>`;
     App.showResult(header, tags, content, null, null, {
       chainFrom: 'element',
       chainZodiac: null,
-      chainContext: { from: 'element reading', element: result.element, detail: result.reading.substring(0, 100) }
+      chainContext: { from: 'element reading', element: element, detail: (result.reading || '').substring(0, 100) }
     });
   }
 

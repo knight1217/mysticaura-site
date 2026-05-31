@@ -39,7 +39,7 @@ Tools.persona = (function() {
     App.showLoading('Blending your cosmic reading into a persona...');
     let result;
     try { result = await API.getPersona(words, platform); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => initWithChain()); return; }
     App.hideLoading();
 
     const platformNames = { instagram:'Instagram', twitter:'X/Twitter', tiktok:'TikTok', dating:'Dating Profile' };
@@ -51,17 +51,17 @@ Tools.persona = (function() {
     const content = `
       <div class="fortune-section">
         <div class="fortune-label">✦ Persona Reading (from your ${origin} journey)</div>
-        <div class="fortune-text">${result.reading}</div>
+        <div class="fortune-text">${result.reading || ''}</div>
       </div>
       <div class="prompt-card">
         <div class="fortune-label">✦ Your Bio</div>
         <div class="prompt-box">
           <button class="copy-btn-top" onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)})">Copy</button>
-          <span style="white-space:pre-wrap;">${result.bio}</span>
+          <span style="white-space:pre-wrap;">${result.bio || ''}</span>
         </div>
       </div>`;
 
-    const extraActions = `<button class="action-btn" onclick="navigator.clipboard.writeText('${result.bio.replace(/'/g,"\\'").replace(/\n/g,'\\n')}');alert('Bio copied!')">📋 Copy Bio</button>`;
+    const extraActions = result.bio ? `<button class="action-btn" onclick="navigator.clipboard.writeText('${result.bio.replace(/'/g,"\\'").replace(/\n/g,'\\n')}');alert('Bio copied!')">📋 Copy Bio</button>` : '';
 
     // Show result with chainOpts — pass original context through so cards still work
     App.showResult(header, tags, content, extraActions, null, {
@@ -80,7 +80,7 @@ Tools.persona = (function() {
     App.showLoading('Crafting your persona...');
     let result;
     try { result = await API.getPersona(words, platform); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
     const platformNames = { instagram:'Instagram', twitter:'X/Twitter', tiktok:'TikTok', dating:'Dating Profile' };
@@ -92,17 +92,17 @@ Tools.persona = (function() {
     const content = `
       <div class="fortune-section">
         <div class="fortune-label">✦ Persona Reading</div>
-        <div class="fortune-text">${result.reading}</div>
+        <div class="fortune-text">${result.reading || ''}</div>
       </div>
       <div class="prompt-card">
         <div class="fortune-label">✦ Your Bio</div>
         <div class="prompt-box">
           <button class="copy-btn-top" onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)})">Copy</button>
-          <span style="white-space:pre-wrap;">${result.bio}</span>
+          <span style="white-space:pre-wrap;">${result.bio || ''}</span>
         </div>
       </div>`;
 
-    const extraActions = `<button class="action-btn" onclick="navigator.clipboard.writeText('${result.bio.replace(/'/g,"\\'").replace(/\n/g,'\\n')}');alert('Bio copied!')">📋 Copy Bio</button>`;
+    const extraActions = result.bio ? `<button class="action-btn" onclick="navigator.clipboard.writeText('${result.bio.replace(/'/g,"\\'").replace(/\n/g,'\\n')}');alert('Bio copied!')">📋 Copy Bio</button>` : '';
 
     App.showResult(header, tags, content, extraActions, null, {
       chainFrom: 'persona',

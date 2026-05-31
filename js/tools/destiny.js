@@ -14,7 +14,7 @@ Tools.destiny = (function() {
     App.showLoading('Unveiling your destiny...');
     let result;
     try { result = await API.getDestiny(name, birthday); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
     const header = `<span class="result-zodiac">🔑</span>
@@ -28,7 +28,7 @@ Tools.destiny = (function() {
         <div class="fortune-text">${result.reading}</div>
       </div>
       <div class="detail-grid">
-        <div class="detail-item"><div class="detail-icon">⚡</div><div class="detail-label">Ruling Element</div><div class="detail-value">${result.element}</div></div>
+        <div class="detail-item"><div class="detail-icon">⚡</div><div class="detail-label">Ruling Element</div><div class="detail-value">${result.element || 'Unknown'}</div></div>
         <div class="detail-item"><div class="detail-icon">🎂</div><div class="detail-label">Birthday</div><div class="detail-value">${birthday}</div></div>
       </div>`;
 

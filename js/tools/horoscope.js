@@ -66,11 +66,11 @@ Tools.horoscope = (function() {
     App.showLoading('The stars are whispering...');
     let result;
     try { result = await API.getHoroscope(selectedZodiac, selectedMood); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
     const header = `<span class="result-zodiac">${selectedZodiac.emoji}</span>
-      <div class="result-title">${selectedZodiac.name} · ${selectedMood.emoji} ${selectedMood.name} Fortune</div>`;
+      <div class="result-title">${selectedZodiac.name} · <span class="inline-emoji">${selectedMood.emoji}</span> ${selectedMood.name} Fortune</div>`;
 
     const tags = (result.keywords || []).map(k => `<span class="tag">${k}</span>`).join('');
 
@@ -80,20 +80,20 @@ Tools.horoscope = (function() {
         <div class="fortune-text">${result.reading}</div>
       </div>
       <div class="detail-grid">
-        <div class="detail-item"><div class="detail-icon">🎨</div><div class="detail-label">Lucky Color</div><div class="detail-value">${result.color}</div></div>
-        <div class="detail-item"><div class="detail-icon">🔢</div><div class="detail-label">Lucky Number</div><div class="detail-value">${result.lucky}</div></div>
-        <div class="detail-item"><div class="detail-icon">🌙</div><div class="detail-label">Moon Phase</div><div class="detail-value">${result.moon}</div></div>
-        <div class="detail-item"><div class="detail-icon">⚡</div><div class="detail-label">Element</div><div class="detail-value">${result.element}</div></div>
+        <div class="detail-item"><div class="detail-icon">🎨</div><div class="detail-label">Lucky Color</div><div class="detail-value">${result.color || ''}</div></div>
+        <div class="detail-item"><div class="detail-icon">🔢</div><div class="detail-label">Lucky Number</div><div class="detail-value">${result.lucky || '?'}</div></div>
+        <div class="detail-item"><div class="detail-icon">🌙</div><div class="detail-label">Moon Phase</div><div class="detail-value">${result.moon || ''}</div></div>
+        <div class="detail-item"><div class="detail-icon">⚡</div><div class="detail-label">Element</div><div class="detail-value">${result.element || ''}</div></div>
       </div>
       <div class="fortune-section">
         <div class="fortune-label">✦ Cosmic Advice</div>
-        <div class="fortune-text">${result.advice}</div>
+        <div class="fortune-text">${result.advice || ''}</div>
       </div>`;
 
     App.showResult(header, tags, content, null, null, {
       chainFrom: 'horoscope',
       chainZodiac: selectedZodiac.name,
-      chainContext: { z1: selectedZodiac.name, mood: selectedMood.name, moodDesc: selectedMood.desc, from: 'daily horoscope', detail: result.reading.substring(0, 120) }
+      chainContext: { z1: selectedZodiac.name, mood: selectedMood.name, moodDesc: selectedMood.desc, from: 'daily horoscope', detail: (result.reading || '').substring(0, 120) }
     });
   }
 

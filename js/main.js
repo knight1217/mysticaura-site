@@ -271,17 +271,20 @@ window.App = (function() {
       .replace(/[\u{E0000}-\u{EFFFF}]/gu, '');                                // Unicode tags area
   }
 
+  /* ===== Retry on Error ===== */
+  window._retryFn = null;
+
   /* ===== Result Page ===== */
-  function showResult(header, tags, content, extraActions, showSurprise, chainOpts) {
+  function showResult(header, tags, content, extraActions, showSurprise, chainOpts, isError) {
     document.getElementById('resultHeader').innerHTML = sanitizeText(header);
     document.getElementById('tagCloud').innerHTML = sanitizeText(tags);
     document.getElementById('fortuneCard').innerHTML = sanitizeText(content);
 
-    // Build action buttons
+    // Build action buttons — "Try Again" only on error
     let buttonsHTML = '';
     if (extraActions) buttonsHTML += extraActions;
     buttonsHTML += `<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">`;
-    if (currentTool) {
+    if (isError) {
       buttonsHTML += `<button class="action-btn" onclick="App.retryCurrentTool()">Try Again ✧</button>`;
     }
     buttonsHTML += `<button class="action-btn primary" onclick="App.closeResult()">Back to Menu</button></div>`;
@@ -371,21 +374,28 @@ window.App = (function() {
     window._chainContext = null;
     window._chainOrigin = null;
     window._chainZodiac = null;
+    window._retryFn = null;
   }
 
   function retryCurrentTool() {
     document.getElementById('resultPage').classList.remove('active');
-    if (currentTool) {
+    if (window._retryFn) {
+      const fn = window._retryFn;
+      window._retryFn = null;
+      fn();
+    } else if (currentTool) {
       openTool(currentTool);
     }
   }
 
   /* ===== Error Display ===== */
-  function showError(message) {
+  function showError(message, retryFn) {
     console.error('Tool error:', message);
+    if (retryFn) window._retryFn = retryFn;
     const header = '<span class="result-zodiac">🔮</span><div class="result-title">Oops, the cosmos is busy</div>';
-    const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">Something went wrong. Please try again in a moment.</div></div>`;
-    showResult(header, '', content, null, null);
+    const errDetail = message ? `<br><span style="font-size:0.8rem;color:#999;">(${message})</span>` : '';
+    const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">Something went wrong. Please try again in a moment.${errDetail}</div></div>`;
+    showResult(header, '', content, null, null, null, true);
   }
 
   return {

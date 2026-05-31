@@ -55,25 +55,26 @@ Tools.compatibility = (function() {
     App.showLoading('Calculating cosmic alignment...');
     let result;
     try { result = await API.getCompatibility(z1, z2); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
-    const scoreColor = result.score > 75 ? '#8BC34A' : result.score > 55 ? '#FF9800' : '#E91E63';
+    const score = result.score || 50;
+    const scoreColor = score > 75 ? '#8BC34A' : score > 55 ? '#FF9800' : '#E91E63';
     const header = `<span class="result-zodiac" style="font-size:3rem;">${z1.emoji} ${z2.emoji}</span>
       <div class="result-title">${z1.name} + ${z2.name}</div>`;
 
-    const tags = `<span class="tag" style="font-size:1.3rem;font-weight:bold;color:${scoreColor};">${result.score}% Match</span>
+    const tags = `<span class="tag" style="font-size:1.3rem;font-weight:bold;color:${scoreColor};">${score}% Match</span>
       <span class="tag-divider">·</span>
-      <span class="tag">${result.rating}</span>`;
+      <span class="tag">${result.rating || ''}</span>`;
 
     const content = `
       <div class="fortune-section">
         <div class="fortune-label">✦ Cosmic Connection</div>
-        <div class="fortune-text">${result.reading}</div>
+        <div class="fortune-text">${result.reading || ''}</div>
       </div>
       <div class="fortune-section">
         <div class="fortune-label">✦ Relationship Advice</div>
-        <div class="fortune-text">${result.advice}</div>
+        <div class="fortune-text">${result.advice || ''}</div>
       </div>
       ${result.complement ? `<div class="fortune-section">
         <div class="fortune-label">✦ How You Complement Each Other</div>
@@ -92,8 +93,8 @@ Tools.compatibility = (function() {
       chainContext: { 
         from: 'compatibility reading', 
         match: z1.name + ' & ' + z2.name, 
-        score: result.score, 
-        detail: result.rating,
+        score: score, 
+        detail: result.rating || '',
         isCouple: true,
         z1: z1.name,
         z2: z2.name

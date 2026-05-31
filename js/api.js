@@ -27,6 +27,9 @@ window.API = (function() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
+    }).catch(e => {
+      console.error('Fetch failed:', e.message);
+      throw new Error('Network: ' + e.message);
     });
 
     if (!resp.ok) {
@@ -44,8 +47,24 @@ window.API = (function() {
   }
 
   function safeParse(text) {
-    const cleaned = text.replace(/```json\n?/g, '').replace(/```/g, '');
-    return JSON.parse(cleaned);
+    // 1) Try to extract JSON from ```json ... ``` blocks first
+    const blockMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+    if (blockMatch) {
+      try { return JSON.parse(blockMatch[1].trim()); } catch(e) {}
+    }
+
+    // 2) Try to find the first { ... } or [ ... ] in the text
+    const jsonMatch = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+    if (jsonMatch) {
+      try { return JSON.parse(jsonMatch[1]); } catch(e) {}
+    }
+
+    // 3) Try parsing the whole text (might be clean JSON without wrapper)
+    try { return JSON.parse(text.trim()); } catch(e) {}
+
+    // 4) Last resort: return {reading: text} so the UI still shows something
+    console.warn('safeParse: using raw text fallback', text.slice(0, 100));
+    return { reading: text.trim(), advice: '', keywords: [] };
   }
 
   /* ===== Horoscope ===== */

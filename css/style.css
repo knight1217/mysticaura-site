@@ -20,7 +20,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: 'Georgia', 'Times New Roman', 'Segoe UI Symbol', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', serif;
   background: linear-gradient(135deg, #FFF5F0 0%, #FBF0F5 25%, #F0E6FA 50%, #FFE4E8 75%, #FFF5F0 100%);
   background-attachment: fixed;
   color: var(--text-main);
@@ -1391,6 +1391,27 @@ input.date-input::-moz-placeholder {
 }
 .surprise-card.persona-card .surprise-arrow {
   color: #B490CA;
+}
+
+/* ===== Emoji & Symbol Rendering ===== */
+.tool-emoji, .zodiac-emoji, .mood-emoji, .result-zodiac, .detail-icon,
+.surprise-icon, .logo-icon, .magic-sym, .rune,
+.constellation-divider .symbol, .site-footer .symbols, .tag-divider,
+.splash-title, .splash-sub, .result-title, .flow-title, .site-title,
+.fortune-label, .splash-cta, .picker-title {
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji',
+               'Segoe UI Symbol', 'Georgia', 'Times New Roman', serif;
+}
+
+/* Fix: gradient-text titles (-webkit-text-fill-color:transparent) break colored emoji.
+   Wrap emoji in <span class="inline-emoji"> to restore rendering. */
+.result-title .inline-emoji,
+.flow-title .inline-emoji,
+.splash-title .inline-emoji,
+.fortune-label .inline-emoji {
+  -webkit-text-fill-color: initial;
+  -webkit-background-clip: initial;
+  color: initial;
 }
 
 /* ===== Result page ensure scrolling ===== */

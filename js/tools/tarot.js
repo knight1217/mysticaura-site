@@ -1203,7 +1203,7 @@ Tools.tarot = (function() {
     App.showLoading('The cards are speaking...');
     let result;
     try { result = await API.getTarot(drawnCards); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading()); return; }
     App.hideLoading();
 
     const rich = generateRichReading(drawnCards);

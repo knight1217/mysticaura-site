@@ -90,7 +90,7 @@ Tools.portrait = (function() {
     App.showLoading(loadingText);
     let result;
     try { result = await API.getPortrait(selectedZodiac, contextStr || null); }
-    catch (e) { App.hideLoading(); App.showError(e.message); return; }
+    catch (e) { App.hideLoading(); App.showError(e.message, () => startReading(isSurprise)); return; }
     App.hideLoading();
 
     // Portrait result uses natural page flow (no forced scroll)
@@ -102,7 +102,10 @@ Tools.portrait = (function() {
       flowPage.style.paddingBottom = '';
     }
 
-    const platformHTML = buildPlatformCards(result.prompt, result.tier);
+    const platformHTML = buildPlatformCards(result.prompt || '', result.tier);
+    const prompt = result.prompt || '';
+    const styleDesc = result.styleDesc || 'Mystical';
+    const vibe = result.vibe || 'Magical';
 
     // Check if this is a couple portrait (from compatibility with z2)
     const isCouple = isSurprise && window._portraitSurpriseContext && window._portraitSurpriseContext.z2;
@@ -128,19 +131,19 @@ Tools.portrait = (function() {
     const tags = isCouple && coupleZ2
       ? `<span class="tag">${selectedZodiac.name} + ${coupleZ2.name}</span>
          <span class="tag">${selectedZodiac.element}</span>
-         <span class="tag">${result.styleDesc}</span>
-         <span class="tag">${result.vibe}</span>`
+         <span class="tag">${styleDesc}</span>
+         <span class="tag">${vibe}</span>`
       : `<span class="tag">${selectedZodiac.name}</span>
          <span class="tag">${selectedZodiac.element}</span>
-         <span class="tag">${result.styleDesc}</span>
-         <span class="tag">${result.vibe}</span>`;
+         <span class="tag">${styleDesc}</span>
+         <span class="tag">${vibe}</span>`;
 
     const content = `
       <div class="fortune-section">
         <div class="fortune-label">✦ Your Portrait Prompt</div>
         <div class="prompt-box">
           <button class="copy-btn-top" onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent.trim()).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)})">Copy</button>
-          <span>${result.prompt}</span>
+          <span>${prompt}</span>
         </div>
       </div>
       <div class="fortune-section">
@@ -151,12 +154,12 @@ Tools.portrait = (function() {
         <span style="font-size:0.75rem;color:var(--text-dim);">Copy the prompt → open any platform → paste → enjoy your art ✦</span>
       </div>`;
 
-    const shareText = encodeURIComponent(`My MysticAura portrait gift: ${result.prompt}`);
+    const shareText = encodeURIComponent(`My MysticAura portrait gift: ${prompt}`);
     const shareUrl = encodeURIComponent('https://mysticaura.fun');
     const extraActions = `
       <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}','_blank')">𝕏 Share</button>
       <button class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${shareUrl}','_blank')">📘 Share</button>
-      <button class="share-btn" onclick="navigator.clipboard.writeText('${result.prompt.replace(/'/g,"\\'").replace(/\n/g,' ')}');alert('Prompt copied!')">📋 Copy Prompt</button>`;
+      <button class="share-btn" onclick="navigator.clipboard.writeText('${prompt.replace(/'/g,"\\'").replace(/\n/g,' ')}');alert('Prompt copied!')">📋 Copy Prompt</button>`;
 
     App.showResult(header, tags, content, extraActions, null,
       window._chainOrigin ? {

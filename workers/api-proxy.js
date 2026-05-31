@@ -8,15 +8,20 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // CORS for our domains
+    // CORS for our domains + local dev
     const origin = request.headers.get('Origin') || '';
     const allowedOrigins = [
       'https://mysticaura.fun',
       'https://knight1217.github.io',
-      'http://localhost:8765',
-      'http://localhost:8080'
     ];
-    const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
+    // Allow all localhost + 127.0.0.1 ports (dev), file:// (null origin)
+    const isLocal = origin === 'null'
+      || origin.startsWith('http://localhost:')
+      || origin.startsWith('http://127.0.0.1:');
+
+    const corsOrigin = allowedOrigins.includes(origin) ? origin
+      : (isLocal ? origin : allowedOrigins[0]);
 
     if (request.method === 'OPTIONS') {
       return new Response(null, {
