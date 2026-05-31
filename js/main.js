@@ -394,15 +394,67 @@ window.DatePicker = (function() {
   }
 
   function bindScrollListeners() {
+    // Remove old listeners by replacing nodes (cloneNode drops all listeners)
+    const scrollPositions = {};
     ['drumMonth', 'drumDay', 'drumYear'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.onscrollend = el.onscroll = null; // clear old
+      scrollPositions[id] = el.scrollTop;
+      const clone = el.cloneNode(true);
+      el.parentNode.replaceChild(clone, el);
+    });
+    // Restore scroll positions immediately after replacement
+    ['drumMonth', 'drumDay', 'drumYear'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && scrollPositions[id] !== undefined) {
+        el.scrollTop = scrollPositions[id];
+      }
     });
 
     const drumMonth = document.getElementById('drumMonth');
     const drumDay = document.getElementById('drumDay');
     const drumYear = document.getElementById('drumYear');
+
+    // Mouse drag scroll support
+    function addDragScroll(el) {
+      if (!el) return;
+      let isDragging = false;
+      let startY = 0;
+      let startScrollTop = 0;
+
+      const onMouseMove = (e) => {
+        if (!isDragging) return;
+        const dy = startY - e.clientY;
+        el.scrollTop = startScrollTop + dy;
+      };
+
+      const onMouseUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        el.style.cursor = '';
+        el.style.userSelect = '';
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        const idx = Math.round(el.scrollTop / 44);
+        el.scrollTo({ top: idx * 44, behavior: 'smooth' });
+      };
+
+      el.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return; // only left-click
+        isDragging = true;
+        startY = e.clientY;
+        startScrollTop = el.scrollTop;
+        el.style.cursor = 'grabbing';
+        el.style.userSelect = 'none';
+        e.preventDefault();
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    addDragScroll(drumMonth);
+    addDragScroll(drumDay);
+    addDragScroll(drumYear);
 
     function onScroll(el, onChange) {
       let timer;
@@ -410,7 +462,6 @@ window.DatePicker = (function() {
         updateActiveItems(el);
         clearTimeout(timer);
         timer = setTimeout(() => {
-          // Snap to nearest
           const idx = Math.round(el.scrollTop / 44);
           el.scrollTo({ top: idx * 44, behavior: 'smooth' });
           onChange && onChange();
