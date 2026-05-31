@@ -249,14 +249,22 @@ window.App = (function() {
   window._chainOrigin = null;       // 'horoscope'|'tarot'|'destiny'|'element'|'compatibility'
   window._chainZodiac = null;       // Zodiac sign for portrait surprise
   window._personaChainContext = null; // Set when entering persona via chain
+  window._claimedPersona = false;   // Track if user already claimed persona for current result
+  window._claimedSurprise = false;  // Track if user already claimed surprise for current result
 
   function showPersonaChain() {
+    window._claimedPersona = true;
+    document.getElementById('personaChainContainer').innerHTML = '';
+    document.getElementById('personaChainContainer').style.display = 'none';
     window._personaChainContext = window._chainContext;
     window._personaChainOrigin = window._chainOrigin;
     openTool('persona');
   }
 
   function showPortraitChain() {
+    window._claimedSurprise = true;
+    document.getElementById('surpriseContainer').innerHTML = '';
+    document.getElementById('surpriseContainer').style.display = 'none';
     showPortraitSurprise(window._chainZodiac, window._chainContext);
   }
 
@@ -305,10 +313,8 @@ window.App = (function() {
     const surpriseCC = document.getElementById('surpriseContainer');
 
     if (chainOpts) {
-      const from = chainOpts.chainFrom;
-
-      // Persona card — hide if we're already showing a persona result
-      if (from !== 'persona') {
+      // Dual-claim: both cards always visible, each independently claimable once
+      if (!window._claimedPersona) {
         personaCC.innerHTML = `<div class="surprise-card persona-card" onclick="App.showPersonaChain()" style="cursor:pointer;">
           <span class="surprise-icon">✨</span>
           <div class="surprise-text">
@@ -323,8 +329,7 @@ window.App = (function() {
         personaCC.style.display = 'none';
       }
 
-      // Portrait card — hide if we're already showing a portrait result
-      if (from !== 'portrait') {
+      if (!window._claimedSurprise) {
         surpriseCC.innerHTML = `<div class="surprise-card" onclick="App.showPortraitChain()" style="cursor:pointer;">
           <span class="surprise-icon">🔮</span>
           <div class="surprise-text">
@@ -375,6 +380,9 @@ window.App = (function() {
     window._chainOrigin = null;
     window._chainZodiac = null;
     window._retryFn = null;
+    // Reset dual-claim flags
+    window._claimedPersona = false;
+    window._claimedSurprise = false;
   }
 
   function retryCurrentTool() {
