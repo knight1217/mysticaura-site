@@ -316,125 +316,184 @@ window.App = (function() {
   };
 })();
 
-/* ===== CUSTOM CALENDAR ===== */
-window.Calendar = (function() {
-  let currentDate = new Date();
-  let selectedDate = null;
-  const monthNames = ['January','February','March','April','May','June',
-                      'July','August','September','October','November','December'];
+/* ===== DATE PICKER — Year/Month/Day Drum Rollers ===== */
+window.DatePicker = (function() {
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  let selYear, selMonth, selDay;
+
+  // Generate year list: 1924 to current year
+  const currentYear = new Date().getFullYear();
+  const YEARS = [];
+  for (let y = currentYear; y >= 1924; y--) YEARS.push(y);
+
+  function daysInMonth(month, year) {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  function buildDrum(scrollEl, items, selectedVal, valFn) {
+    scrollEl.innerHTML = '';
+    // Top padding spacer
+    const topPad = document.createElement('div');
+    topPad.style.cssText = 'height:88px;flex-shrink:0;';
+    scrollEl.appendChild(topPad);
+
+    items.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'picker-item';
+      el.textContent = typeof item === 'object' ? item.label : item;
+      el.dataset.val = typeof item === 'object' ? item.val : item;
+      scrollEl.appendChild(el);
+    });
+
+    // Bottom padding spacer
+    const botPad = document.createElement('div');
+    botPad.style.cssText = 'height:88px;flex-shrink:0;';
+    scrollEl.appendChild(botPad);
+
+    // Scroll to selected value
+    requestAnimationFrame(() => {
+      const allItems = scrollEl.querySelectorAll('.picker-item');
+      allItems.forEach((el, idx) => {
+        if (String(el.dataset.val) === String(selectedVal)) {
+          scrollEl.scrollTop = idx * 44;
+        }
+      });
+    });
+  }
+
+  function updateActiveItems(scrollEl) {
+    const scrollTop = scrollEl.scrollTop;
+    const centerIdx = Math.round(scrollTop / 44);
+    const items = scrollEl.querySelectorAll('.picker-item');
+    items.forEach((el, i) => {
+      el.classList.toggle('active', i === centerIdx);
+    });
+    return items[centerIdx] ? items[centerIdx].dataset.val : null;
+  }
+
+  function getScrollValue(scrollEl) {
+    const scrollTop = scrollEl.scrollTop;
+    const centerIdx = Math.round(scrollTop / 44);
+    const items = scrollEl.querySelectorAll('.picker-item');
+    return items[centerIdx] ? items[centerIdx].dataset.val : null;
+  }
+
+  function rebuildDayDrum() {
+    const mo = parseInt(getScrollValue(document.getElementById('drumMonth')), 10);
+    const yr = parseInt(getScrollValue(document.getElementById('drumYear')), 10);
+    const days = daysInMonth(mo, yr);
+    const dayItems = [];
+    for (let d = 1; d <= days; d++) dayItems.push({ label: d, val: d });
+    const clampedDay = Math.min(selDay || 1, days);
+    buildDrum(document.getElementById('drumDay'), dayItems, clampedDay);
+    selDay = clampedDay;
+    bindScrollListeners();
+  }
+
+  function bindScrollListeners() {
+    ['drumMonth', 'drumDay', 'drumYear'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.onscrollend = el.onscroll = null; // clear old
+    });
+
+    const drumMonth = document.getElementById('drumMonth');
+    const drumDay = document.getElementById('drumDay');
+    const drumYear = document.getElementById('drumYear');
+
+    function onScroll(el, onChange) {
+      let timer;
+      el.addEventListener('scroll', function() {
+        updateActiveItems(el);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          // Snap to nearest
+          const idx = Math.round(el.scrollTop / 44);
+          el.scrollTo({ top: idx * 44, behavior: 'smooth' });
+          onChange && onChange();
+        }, 120);
+      });
+    }
+
+    onScroll(drumMonth, () => {
+      selMonth = parseInt(getScrollValue(drumMonth), 10);
+      rebuildDayDrum();
+    });
+    onScroll(drumYear, () => {
+      selYear = parseInt(getScrollValue(drumYear), 10);
+      rebuildDayDrum();
+    });
+    onScroll(drumDay, () => {
+      selDay = parseInt(getScrollValue(drumDay), 10);
+    });
+  }
 
   function open() {
     const overlay = document.getElementById('calendarOverlay');
     if (!overlay) return;
+
+    // Init with today's date
+    const now = new Date();
+    selYear = now.getFullYear();
+    selMonth = now.getMonth();    // 0-indexed
+    selDay = now.getDate();
+
+    // Month items: 0-11 with label
+    const monthItems = MONTHS.map((m, i) => ({ label: m, val: i }));
+    const days = daysInMonth(selMonth, selYear);
+    const dayItems = [];
+    for (let d = 1; d <= days; d++) dayItems.push({ label: d, val: d });
+    const yearItems = YEARS;
+
+    buildDrum(document.getElementById('drumMonth'), monthItems, selMonth);
+    buildDrum(document.getElementById('drumDay'), dayItems, selDay);
+    buildDrum(document.getElementById('drumYear'), yearItems, selYear);
+
     overlay.classList.add('active');
-    render();
+
+    setTimeout(() => {
+      updateActiveItems(document.getElementById('drumMonth'));
+      updateActiveItems(document.getElementById('drumDay'));
+      updateActiveItems(document.getElementById('drumYear'));
+      bindScrollListeners();
+    }, 60);
   }
 
-  function close(e) {
-    if (e && e.target !== document.getElementById('calendarOverlay')) return;
+  function confirm() {
+    const drumMonth = document.getElementById('drumMonth');
+    const drumDay = document.getElementById('drumDay');
+    const drumYear = document.getElementById('drumYear');
+
+    const mo = parseInt(getScrollValue(drumMonth), 10);
+    const d = parseInt(getScrollValue(drumDay), 10);
+    const yr = parseInt(getScrollValue(drumYear), 10);
+
+    if (isNaN(mo) || isNaN(d) || isNaN(yr)) return;
+
+    const input = document.getElementById('destiny-birthday');
+    if (input) {
+      const mStr = String(mo + 1).padStart(2, '0');
+      const dStr = String(d).padStart(2, '0');
+      input.value = `${mStr}/${dStr}/${yr}`;
+    }
+    cancel();
+  }
+
+  function cancel() {
     const overlay = document.getElementById('calendarOverlay');
     if (overlay) overlay.classList.remove('active');
   }
 
-  function prevMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    render();
-  }
-
-  function nextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    render();
-  }
-
-  function today() {
-    currentDate = new Date();
-    selectedDate = new Date();
-    render();
-    updateInput();
-    close();
-  }
-
-  function selectDay(dayEl) {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const day = parseInt(dayEl.dataset.day, 10);
-    selectedDate = new Date(year, month, day);
-    render();
-    updateInput();
-    close();
-  }
-
-  function updateInput() {
-    if (!selectedDate) return;
-    const input = document.getElementById('destiny-birthday');
-    if (input) {
-      const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
-      const d = String(selectedDate.getDate()).padStart(2, '0');
-      const y = selectedDate.getFullYear();
-      input.value = `${m}/${d}/${y}`;
-    }
-  }
-
-  function render() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    document.getElementById('calendarMonthYear').textContent =
-      monthNames[month] + ' ' + year;
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-    const container = document.getElementById('calendarDays');
-    container.innerHTML = '';
-
-    // Previous month padding
-    for (let i = firstDay - 1; i >= 0; i--) {
-      const el = document.createElement('span');
-      el.className = 'calendar-day other-month';
-      el.textContent = daysInPrevMonth - i;
-      container.appendChild(el);
-    }
-
-    const today = new Date();
-    // Current month days
-    for (let d = 1; d <= daysInMonth; d++) {
-      const el = document.createElement('span');
-      el.className = 'calendar-day';
-      el.textContent = d;
-      el.dataset.day = d;
-
-      if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-        el.classList.add('today');
-      }
-      if (selectedDate && d === selectedDate.getDate()
-          && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
-        el.classList.add('selected');
-      }
-      el.onclick = () => selectDay(el);
-      container.appendChild(el);
-    }
-
-    // Next month padding (fill to 6 rows = 42 cells)
-    const totalCells = firstDay + daysInMonth;
-    const remaining = 42 - totalCells;
-    for (let d = 1; d <= remaining; d++) {
-      const el = document.createElement('span');
-      el.className = 'calendar-day other-month';
-      el.textContent = d;
-      container.appendChild(el);
-    }
-  }
-
-  // Auto-bind to destiny birthday input
+  // Auto-bind input click
   document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('destiny-birthday');
-    if (input) {
-      input.addEventListener('click', open);
-    }
+    if (input) input.addEventListener('click', open);
   });
 
-  return { open, close, prevMonth, nextMonth, today };
+  return { open, confirm, cancel };
 })();
 
 /* ===== INIT ===== */

@@ -207,20 +207,36 @@
   <div class="surprise-container" id="surpriseContainer"></div>
 </div>
 
-<!-- ===== Custom Calendar Popup ===== -->
-<div class="calendar-overlay" id="calendarOverlay" onclick="Calendar.close(event)">
-  <div class="calendar-popup" id="calendarPopup" onclick="event.stopPropagation()">
-    <div class="calendar-header">
-      <button onclick="Calendar.prevMonth()">&#10094;</button>
-      <span class="calendar-month-year" id="calendarMonthYear"></span>
-      <button onclick="Calendar.nextMonth()">&#10095;</button>
+<!-- ===== Date Picker — Year/Month/Day Drums ===== -->
+<div class="calendar-overlay" id="calendarOverlay" onclick="if(event.target===this)DatePicker.cancel()">
+  <div class="calendar-popup" id="calendarPopup">
+    <div class="picker-title">✦ Select Your Birthday ✦</div>
+    <div class="picker-drums">
+      <!-- Month -->
+      <div class="picker-drum-wrap">
+        <div class="picker-drum">
+          <div class="picker-drum-label">Month</div>
+          <div class="picker-drum-scroll" id="drumMonth"></div>
+        </div>
+      </div>
+      <!-- Day -->
+      <div class="picker-drum-wrap">
+        <div class="picker-drum">
+          <div class="picker-drum-label">Day</div>
+          <div class="picker-drum-scroll" id="drumDay"></div>
+        </div>
+      </div>
+      <!-- Year -->
+      <div class="picker-drum-wrap">
+        <div class="picker-drum">
+          <div class="picker-drum-label">Year</div>
+          <div class="picker-drum-scroll" id="drumYear"></div>
+        </div>
+      </div>
     </div>
-    <div class="calendar-weekdays">
-      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-    </div>
-    <div class="calendar-days" id="calendarDays"></div>
-    <div class="calendar-footer">
-      <button onclick="Calendar.today()">Today</button>
+    <div class="picker-footer">
+      <button class="picker-cancel-btn" onclick="DatePicker.cancel()">Cancel</button>
+      <button class="picker-confirm-btn" onclick="DatePicker.confirm()">Confirm ✦</button>
     </div>
   </div>
 </div>
