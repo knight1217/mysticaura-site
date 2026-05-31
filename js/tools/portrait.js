@@ -11,8 +11,12 @@ Tools.portrait = (function() {
     let surpriseZodiac = window._portraitSurpriseZodiac;
 
     // Fallback: zodiac consumed but context still has it (e.g. Try Again)
-    if (!surpriseZodiac && window._portraitSurpriseContext && window._portraitSurpriseContext.z1) {
-      surpriseZodiac = window._portraitSurpriseContext.z1;
+    if (!surpriseZodiac && window._portraitSurpriseContext) {
+      const ctx = window._portraitSurpriseContext;
+      if (ctx.z1) surpriseZodiac = ctx.z1;
+      else if (ctx.birthday && window.birthdayToZodiac) {
+        surpriseZodiac = window.birthdayToZodiac(ctx.birthday);
+      }
     }
 
     if (surpriseZodiac) {
