@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MysticAura — Unveil Your Inner Magic</title>
+  <link href="https://mysticaura.fun/"/>
+  <updated>2026-06-07T00:00:00Z</updated>
+  <id>https://mysticaura.fun/</id>
+  <entry>
+    <title>MysticAura Home</title>
+    <link href="https://mysticaura.fun/"/>
+    <id>https://mysticaura.fun/</id>
+    <updated>2026-06-07T00:00:00Z</updated>
+    <summary>AI-powered zodiac, tarot, destiny and personality tools.</summary>
+  </entry>
+</feed>
