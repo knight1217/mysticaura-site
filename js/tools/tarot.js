@@ -856,7 +856,6 @@ Tools.tarot = (function() {
 
   /* ===== Create a card element ===== */
   function createCardEl(card, position, index) {
-    const art = getCardArt(card.name);
     const wrap = document.createElement('div');
     wrap.dataset.revealed = '0';
     wrap.dataset.index = index;
@@ -916,8 +915,8 @@ Tools.tarot = (function() {
       <svg style="position:absolute;top:8px;right:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M10 0 L14 0 L14 4" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="12" cy="2" r="1" fill="#D4A574"/></svg>
       <svg style="position:absolute;bottom:8px;left:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M0 10 L0 14 L4 14" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="2" cy="12" r="1" fill="#D4A574"/></svg>
       <svg style="position:absolute;bottom:8px;right:8px;width:14px;height:14px;z-index:5;opacity:0.5;" viewBox="0 0 14 14"><path d="M10 14 L14 14 L14 10" stroke="#D4A574" stroke-width="1" fill="none"/><circle cx="12" cy="12" r="1" fill="#D4A574"/></svg>
-      <!-- SVG fills card fully -->
-      <div style="position:absolute;inset:0;z-index:1;">${art.svg.replace('viewBox="0 0 100 140"', 'viewBox="0 0 100 140" style="width:100%;height:100%;"')}</div>
+      <!-- Card image fills entire card -->
+      <img src="${card.img || ''}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;border-radius:14px;" alt="${card.name}" onerror="this.style.display='none'">
       <!-- Vignette overlay for mystery -->
       <div style="position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center, transparent 50%, rgba(10,5,16,0.5) 100%);"></div>
       <!-- Bottom gradient for text readability -->
