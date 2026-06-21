@@ -283,7 +283,7 @@ window.App = (function() {
   window._retryFn = null;
 
   /* ===== Result Page ===== */
-  function getToolFootnote() {
+  function getToolFootnote(isError) {
     if (isError || !currentTool) return '';
     const notes = {
       horoscope: '<div class="fortune-footnote"><p><strong>About Horoscopes:</strong> Horoscopes are based on the position of the sun at your time of birth. Astrologers have practiced this art for over 2,000 years, tracing its roots to ancient Babylon. While sun-sign horoscopes are a simplified form, full birth chart readings consider the moon, rising sign, and planetary positions for deeper insight.</p></div>',
@@ -300,7 +300,7 @@ window.App = (function() {
   function showResult(header, tags, content, extraActions, showSurprise, chainOpts, isError) {
     document.getElementById('resultHeader').innerHTML = sanitizeText(header);
     document.getElementById('tagCloud').innerHTML = sanitizeText(tags);
-    document.getElementById('fortuneCard').innerHTML = sanitizeText(content) + getToolFootnote();
+    document.getElementById('fortuneCard').innerHTML = sanitizeText(content) + getToolFootnote(isError);
 
     // Build action buttons — "Try Again" only on error
     let buttonsHTML = '';
