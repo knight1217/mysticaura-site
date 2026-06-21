@@ -107,7 +107,7 @@ async function tryCloudflareAI(body, env) {
   const temperature = body.temperature || 0.9;
   const max_tokens = body.max_tokens || 800;
 
-  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
     messages,
     temperature,
     max_tokens
