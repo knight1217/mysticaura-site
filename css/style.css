@@ -312,6 +312,10 @@ body::before {
   font-size: 1.03rem; color: var(--text-dim);
   line-height: 1.5;
 }
+.tool-review {
+  font-size: 0.78rem; color: var(--warm-gold);
+  margin-top: 4px; opacity: 0.75;
+}
 .tool-arrow {
   color: rgba(212,165,116,0.5);
   font-size: 1.44rem; flex-shrink: 0;
