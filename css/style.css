@@ -217,8 +217,8 @@ body::before {
   position: relative; z-index: 3;
   max-width: 900px; margin: 0 auto;
   min-height: 100vh;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 20px 20px;
+  display: flex; flex-direction: column; justify-content: flex-start;
+  padding: 20px 20px 40px;
   opacity: 0; transform: translateY(30px);
   transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
 }
