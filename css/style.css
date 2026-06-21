@@ -569,6 +569,10 @@ body::before {
   background: radial-gradient(ellipse at 30% 0%, rgba(155,123,184,0.06) 0%, transparent 50%);
   pointer-events: none;
 }
+.fortune-footnote { margin-top: 24px; padding: 16px 20px; background: rgba(155,123,184,0.06); border-radius: 12px; border-left: 3px solid rgba(155,123,184,0.25); }
+.fortune-footnote p { font-size: 0.85rem; line-height: 1.7; color: #6B5278; margin: 0; }
+.fortune-footnote strong { color: #9B7BB8; }
+}
 .fortune-section { margin-bottom: 28px; }
 .fortune-section:last-child { margin-bottom: 0; }
 .fortune-label {

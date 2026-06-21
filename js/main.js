@@ -283,10 +283,24 @@ window.App = (function() {
   window._retryFn = null;
 
   /* ===== Result Page ===== */
+  function getToolFootnote() {
+    if (isError || !currentTool) return '';
+    const notes = {
+      horoscope: '<div class="fortune-footnote"><p><strong>About Horoscopes:</strong> Horoscopes are based on the position of the sun at your time of birth. Astrologers have practiced this art for over 2,000 years, tracing its roots to ancient Babylon. While sun-sign horoscopes are a simplified form, full birth chart readings consider the moon, rising sign, and planetary positions for deeper insight.</p></div>',
+      compatibility: '<div class="fortune-footnote"><p><strong>About Zodiac Compatibility:</strong> Compatibility in astrology goes beyond sun signs. Moon signs govern emotional connection, Venus influences romantic attraction, and Mars drives passion. True compatibility is read from the full synastry chart — comparing two complete birth charts side by side.</p></div>',
+      destiny: '<div class="fortune-footnote"><p><strong>About Destiny Keywords:</strong> The concept of destiny keywords draws from numerology and name analysis — traditions found across cultures from Chinese Ba Zi to Western Pythagorean numerology. Each name and birth date carries unique vibrational energy that can reveal life themes and personal strengths.</p></div>',
+      element: '<div class="fortune-footnote"><p><strong>About the Four Elements:</strong> The classical elements — Fire, Water, Earth, Air — form the foundation of Western esoteric tradition. Each element represents a fundamental mode of being: Fire (will and passion), Water (emotion and intuition), Earth (stability and practicality), Air (intellect and communication). Most people have one dominant element with secondary influences.</p></div>',
+      persona: '<div class="fortune-footnote"><p><strong>About Persona Analysis:</strong> Social media personas reflect our aspirational selves — who we want to be perceived as. Combining personality traits with astrological archetypes creates a coherent personal brand that resonates authentically with your audience.</p></div>',
+      portrait: '<div class="fortune-footnote"><p><strong>About Mystic Portraits:</strong> Throughout history, mystical portraits have been used to capture not just physical appearance but spiritual essence. From Renaissance allegorical paintings to modern AI-generated art, the tradition of visualizing the invisible self continues to evolve.</p></div>',
+      tarot: '<div class="fortune-footnote"><p><strong>About Tarot:</strong> Tarot originated in 15th-century Italy as a card game and evolved into a tool for divination and self-reflection by the 18th century. The 78-card deck is rich with symbolism drawn from astrology, numerology, Kabbalah, and medieval iconography. Each reading is a mirror — reflecting not the future, but the patterns within your own mind.</p></div>'
+    };
+    return notes[currentTool] || '';
+  }
+
   function showResult(header, tags, content, extraActions, showSurprise, chainOpts, isError) {
     document.getElementById('resultHeader').innerHTML = sanitizeText(header);
     document.getElementById('tagCloud').innerHTML = sanitizeText(tags);
-    document.getElementById('fortuneCard').innerHTML = sanitizeText(content);
+    document.getElementById('fortuneCard').innerHTML = sanitizeText(content) + getToolFootnote();
 
     // Build action buttons — "Try Again" only on error
     let buttonsHTML = '';
