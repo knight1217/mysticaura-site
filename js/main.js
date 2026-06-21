@@ -417,7 +417,17 @@ window.App = (function() {
     const header = '<span class="result-zodiac">🔮</span><div class="result-title">Oops, the cosmos is busy</div>';
     const errDetail = message ? `<br><span style="font-size:0.8rem;color:#999;">(${message})</span>` : '';
     const content = `<div class="fortune-section"><div class="fortune-text" style="color:#E91E63;">Something went wrong. Please try again in a moment.${errDetail}</div></div>`;
-    showResult(header, '', content, null, null, null, true);
+    try {
+      showResult(header, '', content, null, null, null, true);
+    } catch(e) {
+      console.error('showResult failed:', e);
+      // Last resort: show flow-page error banner
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:999;background:#E91E63;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;max-width:90%;text-align:center;';
+      banner.textContent = 'Error: ' + (message || 'unknown') + ' — Tap to retry';
+      banner.onclick = () => { banner.remove(); if (retryFn) retryFn(); };
+      document.body.appendChild(banner);
+    }
   }
 
   return {

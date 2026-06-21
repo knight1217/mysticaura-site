@@ -29,19 +29,19 @@ window.API = (function() {
       body: JSON.stringify(body)
     }).catch(e => {
       console.error('Fetch failed:', e.message);
-      throw new Error('Network: ' + e.message);
+      throw new Error('Network error — check connection or VPN');
     });
 
     if (!resp.ok) {
       const errText = await resp.text();
       console.error('API error', resp.status, errText);
-      throw new Error('Please try again');
+      throw new Error('Server busy (HTTP ' + resp.status + ') — try again');
     }
 
     const data = await resp.json();
     if (!data.choices?.[0]?.message?.content) {
       console.error('API: no content in response', JSON.stringify(data).slice(0, 200));
-      throw new Error('Please try again');
+      throw new Error('AI response empty — try again');
     }
     return data.choices[0].message.content;
   }
