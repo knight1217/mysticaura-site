@@ -216,10 +216,10 @@ body::before {
 /* ===== Main Content ===== */
 #main-content {
   position: relative; z-index: 3;
-  max-width: 900px; margin: 0 auto;
+  max-width: 1200px; margin: 0 auto;
   display: flex; flex-direction: column;
   flex: 1;
-  padding: 140px 20px 20px;
+  padding: 80px 24px 20px;
   opacity: 0; transform: translateY(30px);
   transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
 }
@@ -267,8 +267,14 @@ body::before {
 
 /* ===== Tool Cards Section ===== */
 .tools-grid {
-  display: flex; flex-direction: column; gap: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
   padding: 0 12px;
+}
+@media (max-width: 900px) {
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .tools-grid { grid-template-columns: 1fr; }
 }
 .tool-card {
   position: relative;
@@ -291,7 +297,7 @@ body::before {
 }
 .tool-card:hover::before { opacity: 1; }
 .tool-card:hover {
-  transform: translateX(8px);
+  transform: scale(1.02);
   border-color: rgba(155,123,184,0.5);
   box-shadow: 0 8px 40px rgba(155,123,184,0.12), 0 0 0 1px rgba(212,165,116,0.2), 0 0 20px rgba(212,165,116,0.08);
 }
@@ -323,7 +329,7 @@ body::before {
 }
 .tool-card:hover .tool-arrow {
   color: rgba(212,165,116,0.9);
-  transform: translateX(4px);
+  transform: scale(1.15);
 }
 
 /* ===== Flow Pages (hidden by default) ===== */
